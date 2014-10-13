@@ -2,9 +2,9 @@
 
 namespace Quark\Database\Query\Builder;
 
-use Quark\Database;
+use Quark\Database\PDO;
 use Quark\DB;
-use Quark\Exception;
+use Quark\Exception\QuarkException;
 
 /**
  * Database query builder for SELECT statements. See [Query Builder](/database/query/builder) for usage and examples.
@@ -341,7 +341,7 @@ class Select extends Where
 
         if ( ! $select instanceof Select)
         {
-            throw new Exception('first parameter must be a string or an instance of Quark\Database\Query\Builder\Select');
+            throw new QuarkException('first parameter must be a string or an instance of Quark\Database\Query\Builder\Select');
         }
 
         $this->_union[] = array('select' => $select, 'all' => $all);
@@ -372,7 +372,7 @@ class Select extends Where
         if ( ! is_object($db))
         {
             // Get the database instance
-            $db = Database::instance($db);
+            $db = PDO::instance($db);
         }
 
         // TODO refactor quote column and quote table

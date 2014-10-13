@@ -2,8 +2,9 @@
 
 namespace Quark\Database\Query\Builder;
 
+use Quark\Database\PDO;
 use Quark\Database\Query\Builder;
-use Quark\Exception;
+use Quark\Exception\QuarkException;
 
 /**
  * Database query builder for JOIN statements. See [Query Builder](/database/query/builder) for usage and examples.
@@ -60,7 +61,7 @@ class Join extends Builder
     {
         if ( ! empty($this->_using))
         {
-            throw new Exception('JOIN ... ON ... cannot be combined with JOIN ... USING ...');
+            throw new QuarkException('JOIN ... ON ... cannot be combined with JOIN ... USING ...');
         }
 
         $this->_on[] = array($c1, $op, $c2);
@@ -79,7 +80,7 @@ class Join extends Builder
     {
         if ( ! empty($this->_on))
         {
-            throw new Exception('JOIN ... ON ... cannot be combined with JOIN ... USING ...');
+            throw new QuarkException('JOIN ... ON ... cannot be combined with JOIN ... USING ...');
         }
 
         $columns = func_get_args();
@@ -100,7 +101,7 @@ class Join extends Builder
         if ( ! is_object($db))
         {
             // Get the database instance
-            $db = Database::instance($db);
+            $db = PDO::instance($db);
         }
 
         if ($this->_type)

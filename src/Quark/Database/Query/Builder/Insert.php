@@ -3,9 +3,8 @@
 namespace Quark\Database\Query\Builder;
 
 use Quark\Database\Query\Builder;
-use Quark\Database\Query;
 use Quark\DB;
-use Quark\Exception;
+use Quark\Exception\QuarkException;
 
 /**
  * Database query builder for INSERT statements. See [Query Builder](/database/query/builder) for usage and examples.
@@ -100,7 +99,7 @@ class Insert extends Builder
     {
         if ( ! is_array($this->_values))
         {
-            throw new Exception('INSERT INTO ... SELECT statements cannot be combined with INSERT INTO ... VALUES');
+            throw new QuarkException('INSERT INTO ... SELECT statements cannot be combined with INSERT INTO ... VALUES');
         }
 
         // Get all of the passed values
@@ -118,11 +117,11 @@ class Insert extends Builder
      * @throws  \Quark\Exception
      * @return  $this
      */
-    public function select(Query $query)
+    public function select(Builder $query)
     {
         if ($query->type() !== DB::SELECT)
         {
-            throw new Exception('Only SELECT queries can be combined with INSERT queries');
+            throw new QuarkException('Only SELECT queries can be combined with INSERT queries');
         }
 
         $this->_values = $query;

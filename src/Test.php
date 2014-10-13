@@ -9,19 +9,21 @@ $qb = new Select(array(
     'u.name'  => 'name',
     'u.email' => 'email'
 ));
-$qb->where('u.name', '=', 'costam');
 
-$query = $qb->compile();
+$query = $qb
+    ->from(array('users', 'u'))
+    ->join(array('posts', 'p'), 'LEFT')
+        ->on('p.user_id', '=', 'u.id')
+    ->where('u.name', '=', 'costam')
+    ->having_open()
+        ->having('u.age', '>', '10')
+        ->or_having('u.age', '<', '14')
+    ->having_close()
+    ->order_by('u.age', 'DESC')
+    ->compile();
 
 echo $query;
 echo "\n";
-
-
-
-
-
-
-
 
 
 

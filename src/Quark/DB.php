@@ -34,29 +34,6 @@ class DB
     const DELETE =  4;
 
     /**
-     * Create a new [Database_Query] of the given type.
-     *
-     *     // Create a new SELECT query
-     *     $query = DB::query(Database::SELECT, 'SELECT * FROM users');
-     *
-     *     // Create a new DELETE query
-     *     $query = DB::query(Database::DELETE, 'DELETE FROM users WHERE id = 5');
-     *
-     * Specifying the type changes the returned result. When using
-     * `Database::SELECT`, a [Database_Query_Result] will be returned.
-     * `Database::INSERT` queries will return the insert id and number of rows.
-     * For all other queries, the number of affected rows is returned.
-     *
-     * @param   integer  $type  type: Database::SELECT, Database::UPDATE, etc
-     * @param   string   $sql   SQL statement
-     * @return  Query
-     */
-    public static function query($type, $sql)
-    {
-        return new Query($type, $sql);
-    }
-
-    /**
      * Create a new [Database_Query_Builder_Select]. Each argument will be
      * treated as a column. To generate a `foo AS bar` alias, use an array.
      *
