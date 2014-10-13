@@ -2,6 +2,7 @@
 
 namespace Quark\Database\Query\Builder;
 
+use Quark\Database\PDO;
 use Quark\DB;
 
 /**
@@ -63,10 +64,8 @@ class Delete extends Where
         if ( ! is_object($db))
         {
             // Get the database instance
-            $db = Database::instance($db);
+            $db = PDO::instance($db);
         }
-
-        // TODO refactor quote table
 
         // Start a deletion query
         $query = 'DELETE FROM '.$db->quote_table($this->_table);

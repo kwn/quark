@@ -54,7 +54,7 @@ class Join extends Builder
      * @param   mixed $c1 column name or array($column, $alias) or object
      * @param   string $op logic operator
      * @param   mixed $c2 column name or array($column, $alias) or object
-     * @throws  \Quark\Exception
+     * @throws \Quark\Exception\QuarkException
      * @return  $this
      */
     public function on($c1, $op, $c2)
@@ -73,7 +73,7 @@ class Join extends Builder
      * Adds a new condition for joining.
      *
      * @param   string $columns column name
-     * @throws  \Quark\Exception
+     * @throws \Quark\Exception\QuarkException
      * @return  $this
      */
     public function using($columns)
@@ -115,7 +115,6 @@ class Join extends Builder
 
         // Quote the table name that is being joined
         $sql .= ' '.$db->quote_table($this->_table);
-        // TODO refactor quote_table
 
         if ( ! empty($this->_using))
         {

@@ -1,6 +1,7 @@
 <?php
 
 namespace Quark\Database\Query\Builder;
+use Quark\Database\PDO;
 use Quark\DB;
 
 /**
@@ -99,10 +100,8 @@ class Update extends Where
         if ( ! is_object($db))
         {
             // Get the database instance
-            $db = Database::instance($db);
+            $db = PDO::instance($db);
         }
-
-        // TODO refactor quote table
 
         // Start an update query
         $query = 'UPDATE '.$db->quote_table($this->_table);

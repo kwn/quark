@@ -2,6 +2,7 @@
 
 namespace Quark\Database\Query\Builder;
 
+use Quark\Database\PDO;
 use Quark\Database\Query\Builder;
 use Quark\DB;
 use Quark\Exception\QuarkException;
@@ -92,7 +93,7 @@ class Insert extends Builder
      * Adds or overwrites values. Multiple value sets can be added.
      *
      * @param   array $values values list
-     * @throws  \Quark\Exception
+     * @throws \Quark\Exception\QuarkException
      * @return  $this
      */
     public function values(array $values)
@@ -113,8 +114,8 @@ class Insert extends Builder
     /**
      * Use a sub-query to for the inserted values.
      *
-     * @param   \Quark\Database\Query $query Database_Query of SELECT type
-     * @throws  \Quark\Exception
+     * @param \Quark\Database\Query\Builder $query Database_Query of SELECT type
+     * @throws \Quark\Exception\QuarkException
      * @return  $this
      */
     public function select(Builder $query)
@@ -140,10 +141,8 @@ class Insert extends Builder
         if ( ! is_object($db))
         {
             // Get the database instance
-            $db = Database::instance($db);
+            $db = PDO::instance($db);
         }
-
-        // TODO quote table refactor
 
         // Start an insertion query
         $query = 'INSERT INTO '.$db->quote_table($this->_table);
@@ -176,6 +175,9 @@ class Insert extends Builder
         }
         else
         {
+            if (is_array($this->_table)) {
+                throw new QuarkException('Cannot use table alias with INSERT INTO ... SELECT ... construction');
+            }
             // Add the sub-query
             $query .= (string) $this->_values;
         }

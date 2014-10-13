@@ -3,7 +3,6 @@
 namespace Quark\Database;
 
 use Quark\Database;
-use Quark\DB;
 use Quark\Exception\QuarkException;
 use Quark\Database\Query\Builder;
 
@@ -18,381 +17,6 @@ use Quark\Database\Query\Builder;
  */
 class PDO
 {
-    /**
-     * Connect to the database. This is called automatically when the first
-     * query is executed.
-     *
-     *     $db->connect();
-     *
-     * @throws  Exception
-     * @return  void
-     */
-    public function connect()
-    {
-        if ($this->_connection)
-            return;
-
-        // Extract the connection parameters, adding required variabels
-        extract($this->_config['connection'] + array(
-            'dsn'        => '',
-            'username'   => NULL,
-            'password'   => NULL,
-            'persistent' => FALSE,
-        ));
-
-        // Clear the connection parameters for security
-        unset($this->_config['connection']);
-
-        // Force PDO to use exceptions for all errors
-        $options[\PDO::ATTR_ERRMODE] = \PDO::ERRMODE_EXCEPTION;
-
-        if ( ! empty($persistent))
-        {
-            // Make the connection persistent
-            $options[\PDO::ATTR_PERSISTENT] = TRUE;
-        }
-
-        try
-        {
-            // Create a new PDO connection
-            $this->_connection = new \PDO($dsn, $username, $password, $options);
-        }
-        catch (\PDOException $e)
-        {
-            throw new QuarkException($e->getMessage(), $e->getCode());
-        }
-    }
-
-    /**
-     * Create or redefine a SQL aggregate function.
-     *
-     * [!!] Works only with SQLite
-     *
-     * @link http://php.net/manual/function.pdo-sqlitecreateaggregate
-     *
-     * @param   string      $name       Name of the SQL function to be created or redefined
-     * @param   callback    $step       Called for each row of a result set
-     * @param   callback    $final      Called after all rows of a result set have been processed
-     * @param   integer     $arguments  Number of arguments that the SQL function takes
-     *
-     * @return  boolean
-     */
-    public function create_aggregate($name, $step, $final, $arguments = -1)
-    {
-        $this->_connection or $this->connect();
-
-        return $this->_connection->sqliteCreateAggregate(
-            $name, $step, $final, $arguments
-        );
-    }
-
-    /**
-     * Create or redefine a SQL function.
-     *
-     * [!!] Works only with SQLite
-     *
-     * @link http://php.net/manual/function.pdo-sqlitecreatefunction
-     *
-     * @param   string      $name       Name of the SQL function to be created or redefined
-     * @param   callback    $callback   Callback which implements the SQL function
-     * @param   integer     $arguments  Number of arguments that the SQL function takes
-     *
-     * @return  boolean
-     */
-    public function create_function($name, $callback, $arguments = -1)
-    {
-        $this->_connection or $this->connect();
-
-        return $this->_connection->sqliteCreateFunction(
-            $name, $callback, $arguments
-        );
-    }
-
-    /**
-     * Disconnect from the database. This is called automatically by [Database::__destruct].
-     * Clears the database instance from [Database::$instances].
-     *
-     *     $db->disconnect();
-     *
-     * @return  boolean
-     */
-    public function disconnect()
-    {
-        // Destroy the PDO object
-        $this->_connection = NULL;
-
-        unset(self::$instances[$this->_instance]);
-
-        return TRUE;
-    }
-
-    /**
-     * Set the connection character set. This is called automatically by [Database::connect].
-     *
-     *     $db->set_charset('utf8');
-     *
-     * @throws  Exception
-     * @param   string   $charset  character set name
-     * @return  void
-     */
-    public function set_charset($charset)
-    {
-        // Make sure the database is connected
-        $this->_connection || $this->connect();
-
-        // This SQL-92 syntax is not supported by all drivers
-        $this->_connection->exec('SET NAMES '.$this->quote($charset));
-    }
-
-    /**
-     * Perform an SQL query of the given type.
-     *
-     *     // Make a SELECT query and use objects for results
-     *     $db->query(Database::SELECT, 'SELECT * FROM groups', TRUE);
-     *
-     *     // Make a SELECT query and use "Model_User" for the results
-     *     $db->query(Database::SELECT, 'SELECT * FROM users LIMIT 1', 'Model_User');
-     *
-     * @param   integer  $type       Database::SELECT, Database::INSERT, etc
-     * @param   string   $sql        SQL query
-     * @param   mixed    $as_object  result object class string, TRUE for stdClass, FALSE for assoc array
-     * @param   array    $params     object construct parameters for result class
-     * @return  object   Database_Result for SELECT queries
-     * @return  array    list (insert id, row count) for INSERT queries
-     * @return  integer  number of affected rows for all other queries
-     */
-    public function query($type, $sql, $as_object = FALSE, array $params = NULL)
-    {
-        // Make sure the database is connected
-        $this->_connection or $this->connect();
-
-        if (Kohana::$profiling)
-        {
-            // Benchmark this query for the current instance
-            $benchmark = Profiler::start("Database ({$this->_instance})", $sql);
-        }
-
-        try
-        {
-            $result = $this->_connection->query($sql);
-        }
-        catch (\Exception $e)
-        {
-            // Convert the exception in a database exception
-            throw new QuarkException(sprintf('%s [ %s ]', $e->getMessage(), $sql));
-        }
-
-        // Set the last query
-        $this->last_query = $sql;
-
-        if ($type === DB::SELECT)
-        {
-            // Convert the result into an array, as PDOStatement::rowCount is not reliable
-            if ($as_object === FALSE)
-            {
-                $result->setFetchMode(\PDO::FETCH_ASSOC);
-            }
-            elseif (is_string($as_object))
-            {
-                $result->setFetchMode(\PDO::FETCH_CLASS, $as_object, $params);
-            }
-            else
-            {
-                $result->setFetchMode(\PDO::FETCH_CLASS, 'stdClass');
-            }
-
-            $result = $result->fetchAll();
-
-            // Return an iterator of results
-            return new Database_Result_Cached($result, $sql, $as_object, $params);
-        }
-        elseif ($type === Database::INSERT)
-        {
-            // Return a list of insert id and rows created
-            return array(
-                $this->_connection->lastInsertId(),
-                $result->rowCount(),
-            );
-        }
-        else
-        {
-            // Return the number of rows affected
-            return $result->rowCount();
-        }
-    }
-
-    /**
-     * Start a SQL transaction
-     *
-     *     // Start the transactions
-     *     $db->begin();
-     *
-     *     try {
-     *          DB::insert('users')->values($user1)...
-     *          DB::insert('users')->values($user2)...
-     *          // Insert successful commit the changes
-     *          $db->commit();
-     *     }
-     *     catch (Database_Exception $e)
-     *     {
-     *          // Insert failed. Rolling back changes...
-     *          $db->rollback();
-     *      }
-     *
-     * @param string $mode  transaction mode
-     * @return  boolean
-     */
-    public function begin($mode = NULL)
-    {
-        // Make sure the database is connected
-        $this->_connection or $this->connect();
-
-        return $this->_connection->beginTransaction();
-    }
-
-    /**
-     * Commit the current transaction
-     *
-     *     // Commit the database changes
-     *     $db->commit();
-     *
-     * @return  boolean
-     */
-    public function commit()
-    {
-        // Make sure the database is connected
-        $this->_connection or $this->connect();
-
-        return $this->_connection->commit();
-    }
-
-    /**
-     * Abort the current transaction
-     *
-     *     // Undo the changes
-     *     $db->rollback();
-     *
-     * @return  boolean
-     */
-    public function rollback()
-    {
-        // Make sure the database is connected
-        $this->_connection or $this->connect();
-
-        return $this->_connection->rollBack();
-    }
-
-    /**
-     * Sanitize a string by escaping characters that could cause an SQL
-     * injection attack.
-     *
-     *     $value = $db->escape('any string');
-     *
-     * @param   string   $value  value to quote
-     * @return  string
-     */
-    public function escape($value)
-    {
-        // Make sure the database is connected
-        $this->_connection or $this->connect();
-
-        return $this->_connection->quote($value);
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Query types
-    const SELECT =  1;
-    const INSERT =  2;
-    const UPDATE =  3;
-    const DELETE =  4;
-
-    /**
-     * @var  string  default instance name
-     */
-    public static $default = 'default';
-
-    /**
-     * @var  array  Database instances
-     */
-    public static $instances = array();
-
-    /**
-     * Get a singleton Database instance. If configuration is not specified,
-     * it will be loaded from the database configuration file using the same
-     * group as the name.
-     *
-     *     // Load the default database
-     *     $db = Database::instance();
-     *
-     *     // Create a custom configured instance
-     *     $db = Database::instance('custom', $config);
-     *
-     * @param   string $name instance name
-     * @param   array $config configuration parameters
-     * @throws  \Exception
-     * @return  Database
-     */
-    public static function instance($name = NULL, array $config = NULL)
-    {
-        if ($name === NULL)
-        {
-            // Use the default instance name
-            $name = self::$default;
-        }
-
-        if ( ! isset(self::$instances[$name]))
-        {
-            if ($config === NULL)
-            {
-                // Load the configuration for this database
-                $config = array(
-                    'type'       => 'PDO',
-                    'connection' => array(
-                        'dsn'        => 'mysql:host=localhost;dbname=eudeco',
-                        'username'   => 'root',
-                        'password'   => 'Panties69',
-                        'persistent' => FALSE,
-                    ),
-                    'table_prefix' => '',
-                    'charset'      => 'utf8',
-                    'caching'      => FALSE,
-                );
-            }
-
-            if ( ! isset($config['type']))
-            {
-                throw new \Exception(sprintf('Database type not defined in :name configuration', $name));
-            }
-
-            // Set the driver class name
-            $driver = 'Quark\\Database\\'.ucfirst($config['type']);
-
-            // Create the database connection instance
-            $driver = new $driver($name, $config);
-
-            // Store the database instance
-            self::$instances[$name] = $driver;
-        }
-
-        return self::$instances[$name];
-    }
-
-    /**
-     * @var  string  the last query executed
-     */
-    public $last_query;
-
     // Instance name
     protected $_instance;
 
@@ -404,6 +28,16 @@ class PDO
 
     // PDO uses no quoting for identifiers
     protected $_identifier = '';
+
+    /**
+     * @var  string  default instance name
+     */
+    public static $default = 'default';
+
+    /**
+     * @var  array  Database instances
+     */
+    public static $instances = array();
 
     /**
      * Stores the database configuration locally and name the instance.
@@ -459,21 +93,144 @@ class PDO
     }
 
     /**
-     * Count the number of records in a table.
+     * Connect to the database. This is called automatically when the first
+     * query is executed.
      *
-     *     // Get the total number of records in the "users" table
-     *     $count = $db->count_records('users');
+     *     $db->connect();
      *
-     * @param   mixed    $table  table name string or array(query, alias)
-     * @return  integer
+     * @throws  Exception
+     * @return  void
      */
-    public function count_records($table)
+    public function connect()
     {
-        // Quote the table name
-        $table = $this->quote_table($table);
+        if ($this->_connection)
+            return;
 
-        return $this->query(Database::SELECT, 'SELECT COUNT(*) AS total_row_count FROM '.$table, FALSE)
-            ->get('total_row_count');
+        // Extract the connection parameters, adding required variabels
+        extract($this->_config['connection'] + array(
+            'dsn'        => '',
+            'username'   => NULL,
+            'password'   => NULL,
+            'persistent' => FALSE,
+        ));
+
+        // Clear the connection parameters for security
+        unset($this->_config['connection']);
+
+        // Force PDO to use exceptions for all errors
+        $options[\PDO::ATTR_ERRMODE] = \PDO::ERRMODE_EXCEPTION;
+
+        if ( ! empty($persistent))
+        {
+            // Make the connection persistent
+            $options[\PDO::ATTR_PERSISTENT] = TRUE;
+        }
+
+        try
+        {
+            // Create a new PDO connection
+            $this->_connection = new \PDO($dsn, $username, $password, $options);
+        }
+        catch (\PDOException $e)
+        {
+            throw new QuarkException($e->getMessage(), $e->getCode());
+        }
+    }
+
+    /**
+     * Disconnect from the database. This is called automatically by [Database::__destruct].
+     * Clears the database instance from [Database::$instances].
+     *
+     *     $db->disconnect();
+     *
+     * @return  boolean
+     */
+    public function disconnect()
+    {
+        // Destroy the PDO object
+        $this->_connection = NULL;
+
+        unset(self::$instances[$this->_instance]);
+
+        return TRUE;
+    }
+
+    /**
+     * Sanitize a string by escaping characters that could cause an SQL
+     * injection attack.
+     *
+     *     $value = $db->escape('any string');
+     *
+     * @param   string   $value  value to quote
+     * @return  string
+     */
+    public function escape($value)
+    {
+        // Make sure the database is connected
+        $this->_connection or $this->connect();
+
+        return $this->_connection->quote($value);
+    }
+
+    /**
+     * Get a singleton Database instance. If configuration is not specified,
+     * it will be loaded from the database configuration file using the same
+     * group as the name.
+     *
+     *     // Load the default database
+     *     $db = Database::instance();
+     *
+     *     // Create a custom configured instance
+     *     $db = Database::instance('custom', $config);
+     *
+     * @param   string $name instance name
+     * @param   array $config configuration parameters
+     * @throws  \Exception
+     * @return  PDO
+     */
+    public static function instance($name = NULL, array $config = NULL)
+    {
+        if ($name === NULL)
+        {
+            // Use the default instance name
+            $name = self::$default;
+        }
+
+        if ( ! isset(self::$instances[$name]))
+        {
+            if ($config === NULL)
+            {
+                // Load the configuration for this database
+                $config = array(
+                    'type'       => 'PDO',
+                    'connection' => array(
+                        'dsn'        => 'mysql:host=localhost;dbname=eudeco',
+                        'username'   => 'root',
+                        'password'   => 'Panties69',
+                        'persistent' => FALSE,
+                    ),
+                    'table_prefix' => '',
+                    'charset'      => 'utf8',
+                    'caching'      => FALSE,
+                );
+            }
+
+            if ( ! isset($config['type']))
+            {
+                throw new \Exception(sprintf('Database type not defined in :name configuration', $name));
+            }
+
+            // Set the driver class name
+            $driver = 'Quark\\Database\\'.ucfirst($config['type']);
+
+            // Create the database connection instance
+            $driver = new $driver($name, $config);
+
+            // Store the database instance
+            self::$instances[$name] = $driver;
+        }
+
+        return self::$instances[$name];
     }
 
     /**
@@ -815,7 +572,4 @@ class PDO
 
         return $value;
     }
-
-
-
 }

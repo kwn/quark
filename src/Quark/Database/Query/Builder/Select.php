@@ -329,7 +329,7 @@ class Select extends Where
      * @param mixed $select if string, it must be the name of a table. Else
      *  must be an instance of Database_Query_Builder_Select
      * @param boolean $all decides if it's an UNION or UNION ALL clause
-     * @throws \Quark\Exception
+     * @throws \Quark\Exception\QuarkException
      * @return $this
      */
     public function union($select, $all = TRUE)
@@ -374,8 +374,6 @@ class Select extends Where
             // Get the database instance
             $db = PDO::instance($db);
         }
-
-        // TODO refactor quote column and quote table
 
         // Callback to quote columns
         $quote_column = array($db, 'quote_column');
@@ -453,13 +451,14 @@ class Select extends Where
 
         if ( ! empty($this->_union))
         {
+            $query = '('.$query.')';
             foreach ($this->_union as $u) {
                 $query .= ' UNION ';
                 if ($u['all'] === TRUE)
                 {
                     $query .= 'ALL ';
                 }
-                $query .= $u['select']->compile($db);
+                $query .= '('.$u['select']->compile($db).')';
             }
         }
 

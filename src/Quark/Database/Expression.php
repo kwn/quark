@@ -113,7 +113,7 @@ class Expression
      * Compile the SQL expression and return it. Replaces any parameters with
      * their given values.
      *
-     * @param   mixed    Database instance or name of instance
+     * @param   mixed    PDO instance or name of instance
      * @return  string
      */
     public function compile($db = NULL)
@@ -121,7 +121,7 @@ class Expression
         if ( ! is_object($db))
         {
             // Get the database instance
-            $db = Database::instance($db);
+            $db = PDO::instance($db);
         }
 
         $value = $this->value();

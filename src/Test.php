@@ -3,28 +3,38 @@
 spl_autoload_register('autoload');
 
 use Quark\Database\Query\Builder\Select;
-
+use Quark\Database\Query\Builder\Insert;
 
 $qb = new Select(array(
     'u.name'  => 'name',
     'u.email' => 'email'
 ));
 
-$query = $qb
+$select = $qb
     ->from(array('users', 'u'))
     ->join(array('posts', 'p'), 'LEFT')
         ->on('p.user_id', '=', 'u.id')
-    ->where('u.name', '=', 'costam')
+    ->where('u.name', '=', 'test')
     ->having_open()
         ->having('u.age', '>', '10')
         ->or_having('u.age', '<', '14')
     ->having_close()
-    ->order_by('u.age', 'DESC')
+    ->order_by('u.age', 'DESC');
+
+//echo $select;
+echo "\n";
+
+
+$qb = new Insert();
+$query = $qb
+    ->table('posts')
+    ->columns(array('posts.username', 'posts.posts', 'posts.age'))
+    ->select($select)
     ->compile();
 
 echo $query;
 echo "\n";
-
+echo "\n";
 
 
 function autoload($className)
