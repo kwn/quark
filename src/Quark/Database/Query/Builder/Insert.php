@@ -23,21 +23,21 @@ class Insert extends Builder
      *
      * @var string|null
      */
-    protected $_table;
+    private $table;
 
     /**
      * (...)
      *
      * @var array
      */
-    protected $_columns = array();
+    private $columns = array();
 
     /**
      * VALUES (...)
      *
      * @var array
      */
-    protected $_values = array();
+    private $values = array();
 
     /**
      * Set the table and columns for an insert.
@@ -45,18 +45,18 @@ class Insert extends Builder
      * @param   mixed  $table    table name or array($table, $alias) or object
      * @param   array  $columns  column names
      */
-    public function __construct($table = NULL, array $columns = NULL)
+    public function __construct($table = null, array $columns = null)
     {
         if ($table)
         {
             // Set the inital table name
-            $this->_table = $table;
+            $this->table($table);
         }
 
         if ($columns)
         {
             // Set the column names
-            $this->_columns = $columns;
+            $this->columns = $columns;
         }
 
         // Start the query with no SQL
@@ -66,12 +66,17 @@ class Insert extends Builder
     /**
      * Sets the table to insert into.
      *
-     * @param   mixed  $table  table name or array($table, $alias) or object
+     * @param   string $table table name or array($table, $alias) or object
+     * @throws  QuarkException
      * @return  $this
      */
     public function table($table)
     {
-        $this->_table = $table;
+        if (!is_string($table)) {
+            throw new QuarkException('INSERT INTO syntax does not allow table aliasing');
+        }
+
+        $this->table = $table;
 
         return $this;
     }
@@ -84,7 +89,7 @@ class Insert extends Builder
      */
     public function columns(array $columns)
     {
-        $this->_columns = $columns;
+        $this->columns = $columns;
 
         return $this;
     }
@@ -98,7 +103,7 @@ class Insert extends Builder
      */
     public function values(array $values)
     {
-        if ( ! is_array($this->_values))
+        if ( ! is_array($this->values))
         {
             throw new QuarkException('INSERT INTO ... SELECT statements cannot be combined with INSERT INTO ... VALUES');
         }
@@ -106,7 +111,7 @@ class Insert extends Builder
         // Get all of the passed values
         $values = func_get_args();
 
-        $this->_values = array_merge($this->_values, $values);
+        $this->values = array_merge($this->values, $values);
 
         return $this;
     }
@@ -125,7 +130,7 @@ class Insert extends Builder
             throw new QuarkException('Only SELECT queries can be combined with INSERT queries');
         }
 
-        $this->_values = $query;
+        $this->values = $query;
 
         return $this;
     }
@@ -136,7 +141,7 @@ class Insert extends Builder
      * @param   mixed  $db  Database instance or name of instance
      * @return  string
      */
-    public function compile($db = NULL)
+    public function compile($db = null)
     {
         if ( ! is_object($db))
         {
@@ -145,18 +150,18 @@ class Insert extends Builder
         }
 
         // Start an insertion query
-        $query = 'INSERT INTO '.$db->quote_table($this->_table);
+        $query = 'INSERT INTO '.$db->quote_table($this->table);
 
         // Add the column names
-        $query .= ' ('.implode(', ', array_map(array($db, 'quote_column'), $this->_columns)).') ';
+        $query .= ' ('.implode(', ', array_map(array($db, 'quote_column'), $this->columns)).') ';
 
-        if (is_array($this->_values))
+        if (is_array($this->values))
         {
             // Callback for quoting values
             $quote = array($db, 'quote');
 
             $groups = array();
-            foreach ($this->_values as $group)
+            foreach ($this->values as $group)
             {
                 foreach ($group as $offset => $value)
                 {
@@ -175,11 +180,8 @@ class Insert extends Builder
         }
         else
         {
-            if (is_array($this->_table)) {
-                throw new QuarkException('Cannot use table alias with INSERT INTO ... SELECT ... construction');
-            }
             // Add the sub-query
-            $query .= (string) $this->_values;
+            $query .= (string) $this->values;
         }
 
         $this->_sql = $query;
@@ -189,14 +191,14 @@ class Insert extends Builder
 
     public function reset()
     {
-        $this->_table = NULL;
+        $this->table = null;
 
-        $this->_columns =
-        $this->_values  = array();
+        $this->columns = array();
+        $this->values  = array();
 
         $this->_parameters = array();
 
-        $this->_sql = NULL;
+        $this->_sql = null;
 
         return $this;
     }

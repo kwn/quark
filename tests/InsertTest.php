@@ -16,7 +16,7 @@ class InsertTest extends PHPUnit_Framework_TestCase
     {
         parent::setUp();
 
-        $this->simpleResultQuery = "INSERT INTO posts AS p (p.username, p.email, p.age) VALUES ('test1', 'test1@test.com', '13'), ('test2', 'test2@test.com', '23'), ('test3', 'test3@test.com', '33')";
+        $this->simpleResultQuery = "INSERT INTO posts (posts.username, posts.email, posts.age) VALUES ('test1', 'test1@test.com', '13'), ('test2', 'test2@test.com', '23'), ('test3', 'test3@test.com', '33')";
         $this->queryBuilder      = new \Quark\Database\Query\Builder\Insert();
     }
 
@@ -24,8 +24,8 @@ class InsertTest extends PHPUnit_Framework_TestCase
     {
         $query = $this
             ->queryBuilder
-            ->table(array('posts', 'p'))
-            ->columns(array('p.username', 'p.email', 'p.age'))
+            ->table('posts')
+            ->columns(array('posts.username', 'posts.email', 'posts.age'))
             ->values(
                 array('test1', 'test1@test.com', '13'),
                 array('test2', 'test2@test.com', '23'),
@@ -40,8 +40,8 @@ class InsertTest extends PHPUnit_Framework_TestCase
     {
         $query = $this
             ->queryBuilder
-            ->table(array('posts', 'p'))
-            ->columns(array('p.username', 'p.email', 'p.age'))
+            ->table('posts')
+            ->columns(array('posts.username', 'posts.email', 'posts.age'))
             ->values(array('test1', 'test1@test.com', '13'))
             ->values(array('test2', 'test2@test.com', '23'))
             ->values(array('test3', 'test3@test.com', '33'))
@@ -54,8 +54,8 @@ class InsertTest extends PHPUnit_Framework_TestCase
     {
         $query = $this
             ->queryBuilder
-            ->table(array('posts', 'p'))
-            ->columns(array('p.username', 'p.email', 'p.age'))
+            ->table('posts')
+            ->columns(array('posts.username', 'posts.email', 'posts.age'))
             ->values(array('test1', 'test1@test.com', '13'))
             ->reset()
             ->compile();
@@ -68,8 +68,8 @@ class InsertTest extends PHPUnit_Framework_TestCase
     public function testInitTableAndColumnsInConstructor()
     {
         $queryBuilder = new \Quark\Database\Query\Builder\Insert(
-            array('posts', 'p'),
-            array('p.username', 'p.email', 'p.age')
+            'posts',
+            array('posts.username', 'posts.email', 'posts.age')
         );
 
         $query = $queryBuilder
