@@ -97,13 +97,10 @@ class Select extends Where
         $this->union    = array();
         $this->lastJoin = null;
 
-        if ( ! empty($columns))
-        {
-            // Set the initial columns
+        if (!empty($columns)) {
             $this->select = $columns;
         }
 
-        // Start the query with no actual SQL statement
         parent::__construct(DB::SELECT, '');
     }
 

@@ -8,36 +8,47 @@ use Quark\Exception\QuarkException;
 
 /**
  * Database query builder for JOIN statements. See [Query Builder](/database/query/builder) for usage and examples.
- *
- * @package    Kohana/Database
- * @category   Query
- * @author     Kohana Team
- * @copyright  (c) 2008-2009 Kohana Team
- * @license    http://kohanaphp.com/license
  */
 class Join extends Builder
 {
-    // Type of JOIN
-    protected $type;
+    /**
+     * Type of JOIN
+     *
+     * @var string
+     */
+    private $type;
 
-    // JOIN ...
-    protected $table;
+    /**
+     * JOIN ...
+     *
+     * @var mixed
+     */
+    private $table;
 
-    // ON ...
-    protected $on;
+    /**
+     * ON ...
+     *
+     * @var array
+     */
+    private $on;
 
-    // USING ...
-    protected $using;
+    /**
+     * USING ...
+     *
+     * @var array
+     */
+    private $using;
 
     /**
      * Creates a new JOIN statement for a table. Optionally, the type of JOIN
      * can be specified as the second parameter.
      *
-     * @param   mixed   $table  column name or array($column, $alias) or object
-     * @param   string  $type   type of JOIN: INNER, RIGHT, LEFT, etc
+     * @param  mixed   $table  column name or array($column, $alias) or object
+     * @param  string  $type   type of JOIN: INNER, RIGHT, LEFT, etc
      */
     public function __construct($table, $type = null)
     {
+        $this->type  = null;
         $this->on    = array();
         $this->using = array();
 
@@ -54,7 +65,7 @@ class Join extends Builder
      * @param   mixed $c1 column name or array($column, $alias) or object
      * @param   string $op logic operator
      * @param   mixed $c2 column name or array($column, $alias) or object
-     * @throws \Quark\Exception\QuarkException
+     * @throws  \Quark\Exception\QuarkException
      * @return  $this
      */
     public function on($c1, $op, $c2)
@@ -72,7 +83,7 @@ class Join extends Builder
      * Adds a new condition for joining.
      *
      * @param   string $columns column name
-     * @throws \Quark\Exception\QuarkException
+     * @throws  \Quark\Exception\QuarkException
      * @return  $this
      */
     public function using($columns)
@@ -100,7 +111,7 @@ class Join extends Builder
             $db = PDO::instance($db);
         }
 
-        if ($this->type) {
+        if (null !== $this->type) {
             $sql = strtoupper($this->type).' JOIN';
         } else {
             $sql = 'JOIN';
@@ -129,11 +140,15 @@ class Join extends Builder
         return $sql;
     }
 
+    /**
+     * Reset JOIN statement
+     *
+     * @return void
+     */
     public function reset()
     {
         $this->type  = null;
         $this->table = null;
-
-        $this->on = array();
+        $this->on    = array();
     }
 }
