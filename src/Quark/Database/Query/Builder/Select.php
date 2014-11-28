@@ -406,8 +406,8 @@ class Select extends Where
             $query .= ' '.$this->_compile_join($db, $this->join);
         }
 
-        if (!empty($this->_where)) {
-            $query .= ' WHERE '.$this->_compile_conditions($db, $this->_where);
+        if (!empty($this->where)) {
+            $query .= ' WHERE '.$this->_compile_conditions($db, $this->where);
         }
 
         if (!empty($this->groupBy)) {
@@ -454,7 +454,7 @@ class Select extends Where
         $this->select  = array();
         $this->from    = array();
         $this->join    = array();
-        $this->_where  = array();
+        $this->where   = array();
         $this->groupBy = array();
         $this->having  = array();
         $this->orderBy = array();

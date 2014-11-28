@@ -103,8 +103,8 @@ class Update extends Where
 
         $query .= ' SET '.$this->_compile_set($db, $this->set);
 
-        if (!empty($this->_where)) {
-            $query .= ' WHERE '.$this->_compile_conditions($db, $this->_where);
+        if (!empty($this->where)) {
+            $query .= ' WHERE '.$this->_compile_conditions($db, $this->where);
         }
 
         if (!empty($this->orderBy)) {
@@ -125,7 +125,7 @@ class Update extends Where
         $this->table = null;
 
         $this->set   = array();
-        $this->_where = array();
+        $this->where = array();
 
         $this->limit = null;
 

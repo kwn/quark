@@ -2,7 +2,6 @@
 
 spl_autoload_register('autoload');
 
-use Quark\Database\Query\Builder\Select;
 /*
 $qb = new Select(array(
     array('users.id', 'id'),
@@ -46,13 +45,17 @@ $select
     ->compile();
 */
 
-$qb = new Select();
+$qb = new \Quark\Database\Query\Builder\Select();
 
 $query = $qb
     ->select('id', 'username', 'pass')
     ->from('users', 'u')
-    ->limit(10)
-    ->offset(10);
+    ->where_open()
+        ->where('u.age', '>', 18)
+        ->or_where('u.adult', '=', 1)
+    ->where_close()
+    ->and_where_open()
+    ->where_close_empty();
 
 echo $query;
 echo "\n";

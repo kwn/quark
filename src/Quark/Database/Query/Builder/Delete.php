@@ -70,8 +70,8 @@ class Delete extends Where
 
         $query = 'DELETE FROM '.$db->quoteTable($this->table);
 
-        if (!empty($this->_where)) {
-            $query .= ' WHERE '.$this->_compile_conditions($db, $this->_where);
+        if (!empty($this->where)) {
+            $query .= ' WHERE '.$this->_compile_conditions($db, $this->where);
         }
 
         if (!empty($this->orderBy)) {
@@ -90,7 +90,7 @@ class Delete extends Where
     public function reset()
     {
         $this->table = null;
-        $this->_where = array();
+        $this->where = array();
 
         $this->_parameters = array();
         $this->_sql        = null;

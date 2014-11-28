@@ -20,7 +20,7 @@ abstract class Where extends Builder
      *
      * @var array
      */
-    protected $_where = array();
+    protected $where = array();
 
     /**
      * ORDER BY ...
@@ -59,7 +59,7 @@ abstract class Where extends Builder
      */
     public function and_where($column, $op, $value)
     {
-        $this->_where[] = array('AND' => array($column, $op, $value));
+        $this->where[] = array('AND' => array($column, $op, $value));
 
         return $this;
     }
@@ -74,7 +74,7 @@ abstract class Where extends Builder
      */
     public function or_where($column, $op, $value)
     {
-        $this->_where[] = array('OR' => array($column, $op, $value));
+        $this->where[] = array('OR' => array($column, $op, $value));
 
         return $this;
     }
@@ -96,7 +96,7 @@ abstract class Where extends Builder
      */
     public function and_where_open()
     {
-        $this->_where[] = array('AND' => '(');
+        $this->where[] = array('AND' => '(');
 
         return $this;
     }
@@ -108,7 +108,7 @@ abstract class Where extends Builder
      */
     public function or_where_open()
     {
-        $this->_where[] = array('OR' => '(');
+        $this->where[] = array('OR' => '(');
 
         return $this;
     }
@@ -131,11 +131,11 @@ abstract class Where extends Builder
      */
     public function where_close_empty()
     {
-        $group = end($this->_where);
+        $group = end($this->where);
 
         if ($group && reset($group) === '(')
         {
-            array_pop($this->_where);
+            array_pop($this->where);
 
             return $this;
         }
@@ -150,7 +150,7 @@ abstract class Where extends Builder
      */
     public function and_where_close()
     {
-        $this->_where[] = array('AND' => ')');
+        $this->where[] = array('AND' => ')');
 
         return $this;
     }
@@ -162,7 +162,7 @@ abstract class Where extends Builder
      */
     public function or_where_close()
     {
-        $this->_where[] = array('OR' => ')');
+        $this->where[] = array('OR' => ')');
 
         return $this;
     }
