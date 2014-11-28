@@ -113,6 +113,57 @@ class InsertTest extends PHPUnit_Framework_TestCase
         $this->assertSame($expected, $query);
     }
 
+    public function testExceptionWhenTryingToMixValuesArrayAndSelectSubquery()
+    {
+        $qb = new \Quark\Database\Query\Builder\Select(array(
+            'u.name'  => 'name',
+            'u.email' => 'email'
+        ));
+
+        $select = $qb
+            ->from(array('users', 'u'))
+            ->join(array('posts', 'p'), 'LEFT')
+            ->on('p.user_id', '=', 'u.id')
+            ->where('u.name', '=', 'test')
+            ->having_open()
+            ->having('u.age', '>', '10')
+            ->or_having('u.age', '<', '14')
+            ->having_close()
+            ->order_by('u.age', 'DESC');
+
+        try {
+            $this
+                ->queryBuilder
+                ->table('posts')
+                ->columns(array('posts.username', 'posts.posts', 'posts.age'))
+                ->select($select)
+                ->values(array('posts.username'));
+
+            $this->assertTrue(false, 'Exception not thrown');
+        } catch (\Quark\Exception\QuarkException $e) {
+            $this->assertTrue(true, 'Exception thrown');
+        }
+    }
+
+    public function testExceptionWhenTryingToUseSelectWithDifferentBuilderType()
+    {
+        $qb = new \Quark\Database\Query\Builder\Insert('posts');
+
+        try {
+            $this
+                ->queryBuilder
+                ->table('posts')
+                ->columns(array('posts.username', 'posts.posts', 'posts.age'))
+                ->select($qb)
+                ->values(array('posts.username'));
+
+            $this->assertTrue(false, 'Exception not thrown');
+        } catch(\Quark\Exception\QuarkException $e) {
+            $this->assertTrue(true, 'Exception thrown');
+        }
+    }
+
+
     public function testExceptionWhenUsingTableAliasInInsertSelectConstruction()
     {
         $qb = new \Quark\Database\Query\Builder\Select(array(

@@ -340,6 +340,16 @@ class PDO
     }
 
     /**
+     * @param $column
+     * @return string
+     * @deprecated
+     */
+    public function quote_column($column)
+    {
+        return $this->quoteColumn($column);
+    }
+
+    /**
      * Quote a database column name and add the table prefix if needed.
      *
      *     $column = $db->quote_column($column);
@@ -358,7 +368,7 @@ class PDO
      * @uses    Database::quote_identifier
      * @uses    Database::table_prefix
      */
-    public function quote_column($column)
+    public function quoteColumn($column)
     {
         // Identifiers are escaped by repeating them
         $escaped_identifier = $this->_identifier.$this->_identifier;
@@ -429,6 +439,16 @@ class PDO
     }
 
     /**
+     * @param $table
+     * @return string
+     * @deprecated
+     */
+    public function quote_table($table)
+    {
+        return $this->quoteTable($table);
+    }
+
+    /**
      * Quote a database table name and adds the table prefix if needed.
      *
      *     $table = $db->quote_table($table);
@@ -443,7 +463,7 @@ class PDO
      * @uses    Database::quote_identifier
      * @uses    Database::table_prefix
      */
-    public function quote_table($table)
+    public function quoteTable($table)
     {
         // Identifiers are escaped by repeating them
         $escaped_identifier = $this->_identifier.$this->_identifier;
@@ -509,6 +529,16 @@ class PDO
     }
 
     /**
+     * @param $value
+     * @return string
+     * @deprecated
+     */
+    public function quote_identifier($value)
+    {
+        return $this->quoteIdentifier($value);
+    }
+
+    /**
      * Quote a database identifier
      *
      * Objects passed to this function will be converted to strings.
@@ -519,7 +549,7 @@ class PDO
      * @param   mixed   $value  any identifier
      * @return  string
      */
-    public function quote_identifier($value)
+    public function quoteIdentifier($value)
     {
         // Identifiers are escaped by repeating them
         $escaped_identifier = $this->_identifier.$this->_identifier;

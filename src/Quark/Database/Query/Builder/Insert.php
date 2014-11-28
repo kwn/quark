@@ -2,6 +2,7 @@
 
 namespace Quark\Database\Query\Builder;
 
+use Quark\Database\Expression;
 use Quark\Database\PDO;
 use Quark\Database\Query\Builder;
 use Quark\DB;
@@ -30,36 +31,34 @@ class Insert extends Builder
      *
      * @var array
      */
-    private $columns = array();
+    private $columns;
 
     /**
      * VALUES (...)
      *
      * @var array
      */
-    private $values = array();
+    private $values;
 
     /**
      * Set the table and columns for an insert.
      *
-     * @param   mixed  $table    table name or array($table, $alias) or object
-     * @param   array  $columns  column names
+     * @param  string|Builder|Expression  $table    table name or object
+     * @param  array                      $columns  column names
      */
     public function __construct($table = null, array $columns = null)
     {
-        if ($table)
-        {
-            // Set the inital table name
+        $this->columns = array();
+        $this->values  = array();
+
+        if (null !== $table)  {
             $this->table($table);
         }
 
-        if ($columns)
-        {
-            // Set the column names
+        if (null !== $columns) {
             $this->columns = $columns;
         }
 
-        // Start the query with no SQL
         return parent::__construct(DB::INSERT, '');
     }
 
@@ -98,17 +97,15 @@ class Insert extends Builder
      * Adds or overwrites values. Multiple value sets can be added.
      *
      * @param   array $values values list
-     * @throws \Quark\Exception\QuarkException
+     * @throws  \Quark\Exception\QuarkException
      * @return  $this
      */
     public function values(array $values)
     {
-        if ( ! is_array($this->values))
-        {
+        if (!is_array($this->values)) {
             throw new QuarkException('INSERT INTO ... SELECT statements cannot be combined with INSERT INTO ... VALUES');
         }
 
-        // Get all of the passed values
         $values = func_get_args();
 
         $this->values = array_merge($this->values, $values);
@@ -125,8 +122,7 @@ class Insert extends Builder
      */
     public function select(Builder $query)
     {
-        if ($query->type() !== DB::SELECT)
-        {
+        if ($query->type() !== DB::SELECT) {
             throw new QuarkException('Only SELECT queries can be combined with INSERT queries');
         }
 
@@ -143,31 +139,20 @@ class Insert extends Builder
      */
     public function compile($db = null)
     {
-        if ( ! is_object($db))
-        {
-            // Get the database instance
+        if (!is_object($db)) {
             $db = PDO::instance($db);
         }
 
-        // Start an insertion query
-        $query = 'INSERT INTO '.$db->quote_table($this->table);
+        $query = 'INSERT INTO '.$db->quoteTable($this->table);
 
-        // Add the column names
-        $query .= ' ('.implode(', ', array_map(array($db, 'quote_column'), $this->columns)).') ';
+        $query .= ' ('.implode(', ', array_map(array($db, 'quoteColumn'), $this->columns)).') ';
 
-        if (is_array($this->values))
-        {
-            // Callback for quoting values
-            $quote = array($db, 'quote');
-
+        if (is_array($this->values)) {
             $groups = array();
-            foreach ($this->values as $group)
-            {
-                foreach ($group as $offset => $value)
-                {
-                    if ((is_string($value) && array_key_exists($value, $this->_parameters)) === FALSE)
-                    {
-                        // Quote the value, it is not a parameter
+            
+            foreach ($this->values as $group) {
+                foreach ($group as $offset => $value) {
+                    if ((is_string($value) && false === array_key_exists($value, $this->_parameters))) {
                         $group[$offset] = $db->quote($value);
                     }
                 }
@@ -175,12 +160,8 @@ class Insert extends Builder
                 $groups[] = '('.implode(', ', $group).')';
             }
 
-            // Add the values
             $query .= 'VALUES '.implode(', ', $groups);
-        }
-        else
-        {
-            // Add the sub-query
+        } else {
             $query .= (string) $this->values;
         }
 
@@ -189,16 +170,19 @@ class Insert extends Builder
         return parent::compile($db);
     }
 
+    /**
+     * Reset query
+     *
+     * @return $this
+     */
     public function reset()
     {
-        $this->table = null;
-
+        $this->table   = null;
         $this->columns = array();
         $this->values  = array();
 
         $this->_parameters = array();
-
-        $this->_sql = null;
+        $this->_sql        = null;
 
         return $this;
     }
