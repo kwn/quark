@@ -4,6 +4,7 @@ namespace Quark\Database\Query\Builder;
 
 use Quark\Database\PDO;
 use Quark\DB;
+use Quark\Exception\QuarkException;
 
 /**
  * Database query builder for DELETE statements. See [Query Builder](/database/query/builder) for usage and examples.
@@ -21,34 +22,36 @@ class Delete extends Where
      *
      * @var string|null
      */
-    protected $_table;
+    private $table;
 
     /**
      * Set the table for a delete.
      *
-     * @param   mixed  $table  table name or array($table, $alias) or object
+     * @param   string  $table  table name or array($table, $alias) or object
      */
-    public function __construct($table = NULL)
+    public function __construct($table = null)
     {
-        if ($table)
-        {
-            // Set the inital table name
-            $this->_table = $table;
+        if (null !== $table) {
+            $this->table($table);
         }
 
-        // Start the query with no SQL
         return parent::__construct(DB::DELETE, '');
     }
 
     /**
      * Sets the table to delete from.
      *
-     * @param   mixed  $table  table name or array($table, $alias) or object
+     * @param   mixed $table table name or array($table, $alias) or object
+     * @throws  QuarkException
      * @return  $this
      */
     public function table($table)
     {
-        $this->_table = $table;
+        if (!is_string($table)) {
+            throw new QuarkException('DELETE FROM syntax does not allow table aliasing');
+        }
+
+        $this->table = $table;
 
         return $this;
     }
@@ -59,32 +62,23 @@ class Delete extends Where
      * @param   mixed  $db  Database instance or name of instance
      * @return  string
      */
-    public function compile($db = NULL)
+    public function compile($db = null)
     {
-        if ( ! is_object($db))
-        {
-            // Get the database instance
+        if (!is_object($db)) {
             $db = PDO::instance($db);
         }
 
-        // Start a deletion query
-        $query = 'DELETE FROM '.$db->quote_table($this->_table);
+        $query = 'DELETE FROM '.$db->quoteTable($this->table);
 
-        if ( ! empty($this->_where))
-        {
-            // Add deletion conditions
+        if (!empty($this->_where)) {
             $query .= ' WHERE '.$this->_compile_conditions($db, $this->_where);
         }
 
-        if ( ! empty($this->_order_by))
-        {
-            // Add sorting
+        if (!empty($this->_order_by)) {
             $query .= ' '.$this->_compile_order_by($db, $this->_order_by);
         }
 
-        if ($this->_limit !== NULL)
-        {
-            // Add limiting
+        if ($this->_limit !== null) {
             $query .= ' LIMIT '.$this->_limit;
         }
 
@@ -95,12 +89,11 @@ class Delete extends Where
 
     public function reset()
     {
-        $this->_table = NULL;
+        $this->table = null;
         $this->_where = array();
 
         $this->_parameters = array();
-
-        $this->_sql = NULL;
+        $this->_sql        = null;
 
         return $this;
     }

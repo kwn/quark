@@ -43,8 +43,8 @@ class Insert extends Builder
     /**
      * Set the table and columns for an insert.
      *
-     * @param  string|Builder|Expression  $table    table name or object
-     * @param  array                      $columns  column names
+     * @param  string  $table    table name or object
+     * @param  array   $columns  column names
      */
     public function __construct($table = null, array $columns = null)
     {

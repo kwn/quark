@@ -3,7 +3,7 @@
 spl_autoload_register('autoload');
 
 use Quark\Database\Query\Builder\Select;
-use Quark\Database\Query\Builder\Insert;
+use Quark\Database\Query\Builder\Delete;
 
 $qb = new Select(array(
     'u.name'  => 'name',
@@ -25,12 +25,15 @@ $select = $qb
 echo "\n";
 
 
-$qb = new Insert();
-$query = $qb
-    ->table('posts')
-    ->columns(array('posts.username', 'posts.posts', 'posts.age'))
-    ->select($select)
-    ->compile();
+$query = new Delete('posts');
+$query
+    ->where('posts.id', 'IN', array('1', '2', '3'))
+    ->or_where_open()
+        ->where('posts.title', 'LIKE', '%test%')
+        ->or_where('posts.title', 'LIKE', '%qwer%')
+    ->or_where_close()
+    ->order_by('posts.views', 'ASC')
+    ->limit(5);
 
 echo $query;
 echo "\n";
