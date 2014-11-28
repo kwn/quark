@@ -22,75 +22,85 @@ class Select extends Where
      *
      * @var array
      */
-    protected $_select = array();
+    protected $select;
 
     /**
      * DISTINCT
      *
      * @var bool
      */
-    protected $_distinct = FALSE;
+    protected $distinct;
 
     /**
      * FROM ...
      *
      * @var array
      */
-    protected $_from = array();
+    protected $from;
 
     /**
      * JOIN ...
      *
      * @var array
      */
-    protected $_join = array();
+    protected $join;
 
     /**
      * GROUP BY ...
      *
      * @var array
      */
-    protected $_group_by = array();
+    protected $groupBy;
 
     /**
      * HAVING ...
      *
      * @var array
      */
-    protected $_having = array();
+    protected $having;
 
     /**
      * OFFSET ...
      *
      * @var null|integer
      */
-    protected $_offset = NULL;
+    protected $offset;
 
     /**
      * UNION ...
      *
      * @var array
      */
-    protected $_union = array();
+    protected $union;
 
     /**
      * The last JOIN statement created
      *
      * @var Join
      */
-    protected $_last_join;
+    protected $lastJoin;
 
     /**
      * Sets the initial columns to select from.
      *
      * @param   array  $columns  column list
      */
-    public function __construct(array $columns = NULL)
+    public function __construct(array $columns = null)
     {
+        $this->select   = array();
+        $this->distinct = false;
+        $this->from     = array();
+        $this->join     = array();
+        $this->groupBy  = array();
+        $this->having   = array();
+        $this->offset   = null;
+        $this->union    = array();
+        $this->lastJoin = null;
+
         if ( ! empty($columns))
         {
             // Set the initial columns
-            $this->_select = $columns;
+            $this->select = $columns;
         }
 
         // Start the query with no actual SQL statement
@@ -105,7 +115,7 @@ class Select extends Where
      */
     public function distinct($value)
     {
-        $this->_distinct = (bool) $value;
+        $this->distinct = (bool) $value;
 
         return $this;
     }
@@ -116,11 +126,11 @@ class Select extends Where
      * @param   mixed  $columns  column name or array($column, $alias) or object
      * @return  $this
      */
-    public function select($columns = NULL)
+    public function select($columns = null)
     {
         $columns = func_get_args();
 
-        $this->_select = array_merge($this->_select, $columns);
+        $this->select = array_merge($this->select, $columns);
 
         return $this;
     }
@@ -133,7 +143,7 @@ class Select extends Where
      */
     public function select_array(array $columns)
     {
-        $this->_select = array_merge($this->_select, $columns);
+        $this->select = array_merge($this->select, $columns);
 
         return $this;
     }
@@ -148,7 +158,7 @@ class Select extends Where
     {
         $tables = func_get_args();
 
-        $this->_from = array_merge($this->_from, $tables);
+        $this->from = array_merge($this->from, $tables);
 
         return $this;
     }
@@ -160,9 +170,9 @@ class Select extends Where
      * @param   string  $type   join type (LEFT, RIGHT, INNER, etc)
      * @return  $this
      */
-    public function join($table, $type = NULL)
+    public function join($table, $type = null)
     {
-        $this->_join[] = $this->_last_join = new Join($table, $type);
+        $this->join[] = $this->lastJoin = new Join($table, $type);
 
         return $this;
     }
@@ -177,7 +187,7 @@ class Select extends Where
      */
     public function on($c1, $op, $c2)
     {
-        $this->_last_join->on($c1, $op, $c2);
+        $this->lastJoin->on($c1, $op, $c2);
 
         return $this;
     }
@@ -192,7 +202,7 @@ class Select extends Where
     {
         $columns = func_get_args();
 
-        call_user_func_array(array($this->_last_join, 'using'), $columns);
+        call_user_func_array(array($this->lastJoin, 'using'), $columns);
 
         return $this;
     }
@@ -207,7 +217,7 @@ class Select extends Where
     {
         $columns = func_get_args();
 
-        $this->_group_by = array_merge($this->_group_by, $columns);
+        $this->groupBy = array_merge($this->groupBy, $columns);
 
         return $this;
     }
@@ -220,7 +230,7 @@ class Select extends Where
      * @param   mixed   $value   column value
      * @return  $this
      */
-    public function having($column, $op, $value = NULL)
+    public function having($column, $op, $value = null)
     {
         return $this->and_having($column, $op, $value);
     }
@@ -233,9 +243,9 @@ class Select extends Where
      * @param   mixed   $value   column value
      * @return  $this
      */
-    public function and_having($column, $op, $value = NULL)
+    public function and_having($column, $op, $value = null)
     {
-        $this->_having[] = array('AND' => array($column, $op, $value));
+        $this->having[] = array('AND' => array($column, $op, $value));
 
         return $this;
     }
@@ -248,9 +258,9 @@ class Select extends Where
      * @param   mixed   $value   column value
      * @return  $this
      */
-    public function or_having($column, $op, $value = NULL)
+    public function or_having($column, $op, $value = null)
     {
-        $this->_having[] = array('OR' => array($column, $op, $value));
+        $this->having[] = array('OR' => array($column, $op, $value));
 
         return $this;
     }
@@ -272,7 +282,7 @@ class Select extends Where
      */
     public function and_having_open()
     {
-        $this->_having[] = array('AND' => '(');
+        $this->having[] = array('AND' => '(');
 
         return $this;
     }
@@ -284,7 +294,7 @@ class Select extends Where
      */
     public function or_having_open()
     {
-        $this->_having[] = array('OR' => '(');
+        $this->having[] = array('OR' => '(');
 
         return $this;
     }
@@ -306,7 +316,7 @@ class Select extends Where
      */
     public function and_having_close()
     {
-        $this->_having[] = array('AND' => ')');
+        $this->having[] = array('AND' => ')');
 
         return $this;
     }
@@ -318,7 +328,7 @@ class Select extends Where
      */
     public function or_having_close()
     {
-        $this->_having[] = array('OR' => ')');
+        $this->having[] = array('OR' => ')');
 
         return $this;
     }
@@ -332,31 +342,30 @@ class Select extends Where
      * @throws \Quark\Exception\QuarkException
      * @return $this
      */
-    public function union($select, $all = TRUE)
+    public function union($select, $all = true)
     {
-        if (is_string($select))
-        {
+        if (is_string($select)) {
             $select = DB::select()->from($select);
         }
 
-        if ( ! $select instanceof Select)
-        {
-            throw new QuarkException('first parameter must be a string or an instance of Quark\Database\Query\Builder\Select');
+        if (!$select instanceof Select) {
+            throw new QuarkException('first parameter must be a string or an instance of \Quark\Database\Query\Builder\Select');
         }
 
-        $this->_union[] = array('select' => $select, 'all' => $all);
+        $this->union[] = array('select' => $select, 'all' => $all);
+
         return $this;
     }
 
     /**
      * Start returning results after "OFFSET ..."
      *
-     * @param   integer   $number  starting result number or NULL to reset
+     * @param   integer   $number  starting result number or null to reset
      * @return  $this
      */
     public function offset($number)
     {
-        $this->_offset = $number;
+        $this->offset = $number;
 
         return $this;
     }
@@ -367,97 +376,70 @@ class Select extends Where
      * @param   mixed  $db  Database instance or name of instance
      * @return  string
      */
-    public function compile($db = NULL)
+    public function compile($db = null)
     {
-        if ( ! is_object($db))
-        {
-            // Get the database instance
+        if (!is_object($db)) {
             $db = PDO::instance($db);
         }
 
-        // Callback to quote columns
         $quote_column = array($db, 'quote_column');
 
-        // Callback to quote tables
         $quote_table = array($db, 'quote_table');
 
-        // Start a selection query
         $query = 'SELECT ';
 
-        if ($this->_distinct === TRUE)
-        {
-            // Select only unique results
+        if (true === $this->distinct) {
             $query .= 'DISTINCT ';
         }
 
-        if (empty($this->_select))
-        {
-            // Select all columns
+        if (empty($this->select)) {
             $query .= '*';
-        }
-        else
-        {
-            // Select all columns
-            $query .= implode(', ', array_unique(array_map($quote_column, $this->_select)));
+        } else {
+            $query .= implode(', ', array_unique(array_map($quote_column, $this->select)));
         }
 
-        if ( ! empty($this->_from))
-        {
-            // Set tables to select from
-            $query .= ' FROM '.implode(', ', array_unique(array_map($quote_table, $this->_from)));
+        if (!empty($this->from)) {
+            $query .= ' FROM '.implode(', ', array_unique(array_map($quote_table, $this->from)));
         }
 
-        if ( ! empty($this->_join))
-        {
-            // Add tables to join
-            $query .= ' '.$this->_compile_join($db, $this->_join);
+        if (!empty($this->join)) {
+            $query .= ' '.$this->_compile_join($db, $this->join);
         }
 
-        if ( ! empty($this->_where))
-        {
-            // Add selection conditions
+        if (!empty($this->_where)) {
             $query .= ' WHERE '.$this->_compile_conditions($db, $this->_where);
         }
 
-        if ( ! empty($this->_group_by))
-        {
-            // Add grouping
-            $query .= ' '.$this->_compile_group_by($db, $this->_group_by);
+        if (!empty($this->groupBy)) {
+            $query .= ' '.$this->_compile_group_by($db, $this->groupBy);
         }
 
-        if ( ! empty($this->_having))
-        {
-            // Add filtering conditions
-            $query .= ' HAVING '.$this->_compile_conditions($db, $this->_having);
+        if (!empty($this->having)) {
+            $query .= ' HAVING '.$this->_compile_conditions($db, $this->having);
         }
 
-        if ( ! empty($this->_order_by))
-        {
-            // Add sorting
-            $query .= ' '.$this->_compile_order_by($db, $this->_order_by);
+        if (!empty($this->orderBy)) {
+            $query .= ' '.$this->_compile_order_by($db, $this->orderBy);
         }
 
-        if ($this->_limit !== NULL)
-        {
-            // Add limiting
-            $query .= ' LIMIT '.$this->_limit;
+        if ($this->limit !== null) {
+            $query .= ' LIMIT '.$this->limit;
         }
 
-        if ($this->_offset !== NULL)
-        {
-            // Add offsets
-            $query .= ' OFFSET '.$this->_offset;
+        if ($this->offset !== null) {
+            $query .= ' OFFSET '.$this->offset;
         }
 
-        if ( ! empty($this->_union))
-        {
+        if (!empty($this->union)) {
             $query = '('.$query.')';
-            foreach ($this->_union as $u) {
+
+            foreach ($this->union as $u) {
                 $query .= ' UNION ';
-                if ($u['all'] === TRUE)
-                {
+
+                if ($u['all'] === true) {
                     $query .= 'ALL ';
                 }
+
                 $query .= '('.$u['select']->compile($db).')';
             }
         }
@@ -469,24 +451,24 @@ class Select extends Where
 
     public function reset()
     {
-        $this->_select   =
-        $this->_from     =
-        $this->_join     =
-        $this->_where    =
-        $this->_group_by =
-        $this->_having   =
-        $this->_order_by =
-        $this->_union = array();
+        $this->select  = array();
+        $this->from    = array();
+        $this->join    = array();
+        $this->_where  = array();
+        $this->groupBy = array();
+        $this->having  = array();
+        $this->orderBy = array();
+        $this->union   = array();
 
-        $this->_distinct = FALSE;
+        $this->distinct = false;
 
-        $this->_limit     =
-        $this->_offset    =
-        $this->_last_join = NULL;
+        $this->limit     = null;
+        $this->offset   = null;
+        $this->lastJoin = null;
 
         $this->_parameters = array();
 
-        $this->_sql = NULL;
+        $this->_sql = null;
 
         return $this;
     }

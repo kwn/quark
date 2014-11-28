@@ -27,14 +27,14 @@ abstract class Where extends Builder
      *
      * @var array
      */
-    protected $_order_by = array();
+    protected $orderBy = array();
 
     /**
      * LIMIT ...
      *
      * @var null|integer
      */
-    protected $_limit = NULL;
+    protected $limit = null;
 
     /**
      * Alias of and_where()
@@ -174,9 +174,9 @@ abstract class Where extends Builder
      * @param   string  $direction  direction of sorting
      * @return  $this
      */
-    public function order_by($column, $direction = NULL)
+    public function order_by($column, $direction = null)
     {
-        $this->_order_by[] = array($column, $direction);
+        $this->orderBy[] = array($column, $direction);
 
         return $this;
     }
@@ -184,12 +184,12 @@ abstract class Where extends Builder
     /**
      * Return up to "LIMIT ..." results
      *
-     * @param   integer  $number  maximum results to return or NULL to reset
+     * @param   integer  $number  maximum results to return or null to reset
      * @return  $this
      */
     public function limit($number)
     {
-        $this->_limit = $number;
+        $this->limit = $number;
 
         return $this;
     }

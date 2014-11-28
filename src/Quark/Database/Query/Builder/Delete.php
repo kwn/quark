@@ -74,12 +74,12 @@ class Delete extends Where
             $query .= ' WHERE '.$this->_compile_conditions($db, $this->_where);
         }
 
-        if (!empty($this->_order_by)) {
-            $query .= ' '.$this->_compile_order_by($db, $this->_order_by);
+        if (!empty($this->orderBy)) {
+            $query .= ' '.$this->_compile_order_by($db, $this->orderBy);
         }
 
-        if ($this->_limit !== null) {
-            $query .= ' LIMIT '.$this->_limit;
+        if ($this->limit !== null) {
+            $query .= ' LIMIT '.$this->limit;
         }
 
         $this->_sql = $query;

@@ -86,8 +86,8 @@ class InsertTest extends PHPUnit_Framework_TestCase
     public function testInsertWithSelectSubquery()
     {
         $qb = new \Quark\Database\Query\Builder\Select(array(
-            'u.name'  => 'name',
-            'u.email' => 'email'
+            'name',
+            'email'
         ));
 
         $select = $qb
@@ -116,8 +116,8 @@ class InsertTest extends PHPUnit_Framework_TestCase
     public function testExceptionWhenTryingToMixValuesArrayAndSelectSubquery()
     {
         $qb = new \Quark\Database\Query\Builder\Select(array(
-            'u.name'  => 'name',
-            'u.email' => 'email'
+            'name',
+            'email'
         ));
 
         $select = $qb
@@ -126,8 +126,8 @@ class InsertTest extends PHPUnit_Framework_TestCase
             ->on('p.user_id', '=', 'u.id')
             ->where('u.name', '=', 'test')
             ->having_open()
-            ->having('u.age', '>', '10')
-            ->or_having('u.age', '<', '14')
+                ->having('u.age', '>', '10')
+                ->or_having('u.age', '<', '14')
             ->having_close()
             ->order_by('u.age', 'DESC');
 
@@ -167,8 +167,8 @@ class InsertTest extends PHPUnit_Framework_TestCase
     public function testExceptionWhenUsingTableAliasInInsertSelectConstruction()
     {
         $qb = new \Quark\Database\Query\Builder\Select(array(
-            'u.name'  => 'name',
-            'u.email' => 'email'
+            'name',
+            'email'
         ));
 
         $select = $qb
@@ -177,13 +177,13 @@ class InsertTest extends PHPUnit_Framework_TestCase
             ->on('p.user_id', '=', 'u.id')
             ->where('u.name', '=', 'test')
             ->having_open()
-            ->having('u.age', '>', '10')
-            ->or_having('u.age', '<', '14')
+                ->having('u.age', '>', '10')
+                ->or_having('u.age', '<', '14')
             ->having_close()
             ->order_by('u.age', 'DESC');
 
         try {
-            $query = $this
+            $this
                 ->queryBuilder
                 ->table(array('posts', 'p'))
                 ->columns(array('p.username', 'p.posts', 'p.age'))

@@ -46,8 +46,8 @@ class DeleteTest extends PHPUnit_Framework_TestCase
             ->queryBuilder
             ->where('posts.id', 'IN', array('1', '2', '3'))
             ->or_where_open()
-            ->where('posts.title', 'LIKE', '%test%')
-            ->or_where('posts.title', 'LIKE', '%qwer%')
+                ->where('posts.title', 'LIKE', '%test%')
+                ->or_where('posts.title', 'LIKE', '%qwer%')
             ->or_where_close()
             ->order_by('posts.views', 'ASC')
             ->limit(5)

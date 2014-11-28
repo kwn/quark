@@ -20,14 +20,14 @@ class Update extends Where
      *
      * @var string|null
      */
-    protected $_table;
+    protected $table;
 
     /**
      * SET ...
      *
      * @var array
      */
-    protected $_set = array();
+    protected $set;
 
     /**
      * Set the table for a update.
@@ -36,13 +36,12 @@ class Update extends Where
      */
     public function __construct($table = null)
     {
-        if ($table)
-        {
-            // Set the inital table name
-            $this->_table = $table;
+        $this->set = array();
+
+        if (null !== $table) {
+            $this->table($table);
         }
 
-        // Start the query with no SQL
         return parent::__construct(DB::UPDATE, '');
     }
 
@@ -54,7 +53,7 @@ class Update extends Where
      */
     public function table($table)
     {
-        $this->_table = $table;
+        $this->table = $table;
 
         return $this;
     }
@@ -67,9 +66,8 @@ class Update extends Where
      */
     public function set(array $pairs)
     {
-        foreach ($pairs as $column => $value)
-        {
-            $this->_set[] = array($column, $value);
+        foreach ($pairs as $column => $value) {
+            $this->set[] = array($column, $value);
         }
 
         return $this;
@@ -84,7 +82,7 @@ class Update extends Where
      */
     public function value($column, $value)
     {
-        $this->_set[] = array($column, $value);
+        $this->set[] = array($column, $value);
 
         return $this;
     }
@@ -97,34 +95,24 @@ class Update extends Where
      */
     public function compile($db = null)
     {
-        if ( ! is_object($db))
-        {
-            // Get the database instance
+        if (!is_object($db)) {
             $db = PDO::instance($db);
         }
 
-        // Start an update query
-        $query = 'UPDATE '.$db->quote_table($this->_table);
+        $query = 'UPDATE '.$db->quoteTable($this->table);
 
-        // Add the columns to update
-        $query .= ' SET '.$this->_compile_set($db, $this->_set);
+        $query .= ' SET '.$this->_compile_set($db, $this->set);
 
-        if ( ! empty($this->_where))
-        {
-            // Add selection conditions
+        if (!empty($this->_where)) {
             $query .= ' WHERE '.$this->_compile_conditions($db, $this->_where);
         }
 
-        if ( ! empty($this->_order_by))
-        {
-            // Add sorting
-            $query .= ' '.$this->_compile_order_by($db, $this->_order_by);
+        if (!empty($this->orderBy)) {
+            $query .= ' '.$this->_compile_order_by($db, $this->orderBy);
         }
 
-        if ($this->_limit !== null)
-        {
-            // Add limiting
-            $query .= ' LIMIT '.$this->_limit;
+        if ($this->limit !== null) {
+            $query .= ' LIMIT '.$this->limit;
         }
 
         $this->_sql = $query;
@@ -134,12 +122,12 @@ class Update extends Where
 
     public function reset()
     {
-        $this->_table = null;
+        $this->table = null;
 
-        $this->_set   =
+        $this->set   = array();
         $this->_where = array();
 
-        $this->_limit = null;
+        $this->limit = null;
 
         $this->_parameters = array();
 
