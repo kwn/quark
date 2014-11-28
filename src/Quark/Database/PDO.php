@@ -204,9 +204,9 @@ class PDO
                 $config = array(
                     'type'       => 'PDO',
                     'connection' => array(
-                        'dsn'        => 'mysql:host=localhost;dbname=eudeco',
-                        'username'   => 'root',
-                        'password'   => 'Panties69',
+                        'dsn'        => 'mysql:host=localhost;dbname=test',
+                        'username'   => 'test',
+                        'password'   => 'test',
                         'persistent' => FALSE,
                     ),
                     'table_prefix' => '',
@@ -352,11 +352,11 @@ class PDO
     /**
      * Quote a database column name and add the table prefix if needed.
      *
-     *     $column = $db->quote_column($column);
+     *     $column = $db->quoteColumn($column);
      *
      * You can also use SQL methods within identifiers.
      *
-     *     $column = $db->quote_column(DB::expr('COUNT(`column`)'));
+     *     $column = $db->quoteColumn(DB::expr('COUNT(`column`)'));
      *
      * Objects passed to this function will be converted to strings.
      * [Database_Expression] objects will be compiled.
@@ -365,7 +365,7 @@ class PDO
      *
      * @param   mixed   $column  column name or array(column, alias)
      * @return  string
-     * @uses    Database::quote_identifier
+     * @uses    Database::quoteIdentifier
      * @uses    Database::table_prefix
      */
     public function quoteColumn($column)
@@ -451,7 +451,7 @@ class PDO
     /**
      * Quote a database table name and adds the table prefix if needed.
      *
-     *     $table = $db->quote_table($table);
+     *     $table = $db->quoteTable($table);
      *
      * Objects passed to this function will be converted to strings.
      * [Database_Expression] objects will be compiled.
@@ -460,7 +460,7 @@ class PDO
      *
      * @param   mixed   $table  table name or array(table, alias)
      * @return  string
-     * @uses    Database::quote_identifier
+     * @uses    Database::quoteIdentifier
      * @uses    Database::table_prefix
      */
     public function quoteTable($table)

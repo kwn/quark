@@ -6,12 +6,6 @@ use Quark\Database\Query\Builder;
 
 /**
  * Database query builder for WHERE statements. See [Query Builder](/database/query/builder) for usage and examples.
- *
- * @package    Kohana/Database
- * @category   Query
- * @author     Kohana Team
- * @copyright  (c) 2008-2009 Kohana Team
- * @license    http://kohanaphp.com/license
  */
 abstract class Where extends Builder
 {
@@ -133,8 +127,7 @@ abstract class Where extends Builder
     {
         $group = end($this->where);
 
-        if ($group && reset($group) === '(')
-        {
+        if ($group && reset($group) === '(') {
             array_pop($this->where);
 
             return $this;

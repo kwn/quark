@@ -6,12 +6,6 @@ use Quark\DB;
 
 /**
  * Database query builder for UPDATE statements. See [Query Builder](/database/query/builder) for usage and examples.
- *
- * @package    Kohana/Database
- * @category   Query
- * @author     Kohana Team
- * @copyright  (c) 2008-2009 Kohana Team
- * @license    http://kohanaphp.com/license
  */
 class Update extends Where
 {
@@ -36,7 +30,8 @@ class Update extends Where
      */
     public function __construct($table = null)
     {
-        $this->set = array();
+        $this->table = null;
+        $this->set   = array();
 
         if (null !== $table) {
             $this->table($table);

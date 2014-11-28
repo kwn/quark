@@ -49,10 +49,9 @@ class Join extends Builder
     public function __construct($table, $type = null)
     {
         $this->type  = null;
+        $this->table = $table;
         $this->on    = array();
         $this->using = array();
-
-        $this->table = $table;
 
         if (null !== $type) {
             $this->type = (string) $type;

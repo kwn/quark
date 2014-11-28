@@ -8,12 +8,6 @@ use Quark\Exception\QuarkException;
 
 /**
  * Database query builder for DELETE statements. See [Query Builder](/database/query/builder) for usage and examples.
- *
- * @package    Kohana/Database
- * @category   Query
- * @author     Kohana Team
- * @copyright  (c) 2008-2009 Kohana Team
- * @license    http://kohanaphp.com/license
  */
 class Delete extends Where
 {
@@ -31,6 +25,8 @@ class Delete extends Where
      */
     public function __construct($table = null)
     {
+        $this->table = null;
+
         if (null !== $table) {
             $this->table($table);
         }
@@ -78,7 +74,7 @@ class Delete extends Where
             $query .= ' '.$this->_compile_order_by($db, $this->orderBy);
         }
 
-        if ($this->limit !== null) {
+        if (null !== $this->limit) {
             $query .= ' LIMIT '.$this->limit;
         }
 

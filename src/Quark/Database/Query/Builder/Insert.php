@@ -2,7 +2,6 @@
 
 namespace Quark\Database\Query\Builder;
 
-use Quark\Database\Expression;
 use Quark\Database\PDO;
 use Quark\Database\Query\Builder;
 use Quark\DB;
@@ -10,12 +9,6 @@ use Quark\Exception\QuarkException;
 
 /**
  * Database query builder for INSERT statements. See [Query Builder](/database/query/builder) for usage and examples.
- *
- * @package    Kohana/Database
- * @category   Query
- * @author     Kohana Team
- * @copyright  (c) 2008-2009 Kohana Team
- * @license    http://kohanaphp.com/license
  */
 class Insert extends Builder
 {
@@ -48,6 +41,7 @@ class Insert extends Builder
      */
     public function __construct($table = null, array $columns = null)
     {
+        $this->table   = null;
         $this->columns = array();
         $this->values  = array();
 

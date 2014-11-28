@@ -227,10 +227,10 @@ abstract class Builder
                     if ($column) {
                         if (is_array($column)) {
                             // Use the column name
-                            $column = $db->quote_identifier(reset($column));
+                            $column = $db->quoteIdentifier(reset($column));
                         } else {
                             // Apply proper quoting to the column
-                            $column = $db->quote_column($column);
+                            $column = $db->quoteColumn($column);
                         }
                     }
 
@@ -261,7 +261,7 @@ abstract class Builder
             list ($column, $value) = $group;
 
             // Quote the column name
-            $column = $db->quote_column($column);
+            $column = $db->quoteColumn($column);
 
             if ((is_string($value) && array_key_exists($value, $this->_parameters)) === FALSE) {
                 // Quote the value, it is not a parameter
@@ -288,10 +288,10 @@ abstract class Builder
         foreach ($columns as $column) {
             if (is_array($column)) {
                 // Use the column alias
-                $column = $db->quote_identifier(end($column));
+                $column = $db->quoteIdentifier(end($column));
             } else {
                 // Apply proper quoting to the column
-                $column = $db->quote_column($column);
+                $column = $db->quoteColumn($column);
             }
 
             $group[] = $column;
@@ -316,10 +316,10 @@ abstract class Builder
 
             if (is_array($column)) {
                 // Use the column alias
-                $column = $db->quote_identifier(end($column));
+                $column = $db->quoteIdentifier(end($column));
             } else {
                 // Apply proper quoting to the column
-                $column = $db->quote_column($column);
+                $column = $db->quoteColumn($column);
             }
 
             if ($direction) {

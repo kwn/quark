@@ -8,12 +8,6 @@ use Quark\Exception\QuarkException;
 
 /**
  * Database query builder for SELECT statements. See [Query Builder](/database/query/builder) for usage and examples.
- *
- * @package    Kohana/Database
- * @category   Query
- * @author     Kohana Team
- * @copyright  (c) 2008-2009 Kohana Team
- * @license    http://kohanaphp.com/license
  */
 class Select extends Where
 {
@@ -333,11 +327,10 @@ class Select extends Where
     /**
      * Adds an other UNION clause.
      *
-     * @param mixed $select if string, it must be the name of a table. Else
-     *  must be an instance of Database_Query_Builder_Select
-     * @param boolean $all decides if it's an UNION or UNION ALL clause
-     * @throws \Quark\Exception\QuarkException
-     * @return $this
+     * @param   mixed    $select  if string, it must be the name of a table. Else must be an instance of Database_Query_Builder_Select
+     * @param   boolean  $all     decides if it's an UNION or UNION ALL clause
+     * @throws  \Quark\Exception\QuarkException
+     * @return  $this
      */
     public function union($select, $all = true)
     {
@@ -379,9 +372,9 @@ class Select extends Where
             $db = PDO::instance($db);
         }
 
-        $quote_column = array($db, 'quote_column');
+        $quote_column = array($db, 'quoteColumn');
 
-        $quote_table = array($db, 'quote_table');
+        $quote_table = array($db, 'quoteTable');
 
         $query = 'SELECT ';
 
@@ -448,24 +441,22 @@ class Select extends Where
 
     public function reset()
     {
-        $this->select  = array();
-        $this->from    = array();
-        $this->join    = array();
-        $this->where   = array();
-        $this->groupBy = array();
-        $this->having  = array();
-        $this->orderBy = array();
-        $this->union   = array();
-
+        $this->select   = array();
         $this->distinct = false;
-
-        $this->limit    = null;
+        $this->from     = array();
+        $this->join     = array();
+        $this->groupBy  = array();
+        $this->having   = array();
         $this->offset   = null;
+        $this->union    = array();
         $this->lastJoin = null;
 
-        $this->_parameters = array();
+        $this->where    = array();
+        $this->orderBy  = array();
+        $this->limit    = null;
 
-        $this->_sql = null;
+        $this->_parameters = array();
+        $this->_sql        = null;
 
         return $this;
     }
