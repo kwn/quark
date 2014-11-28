@@ -18,16 +18,16 @@ use Quark\Exception\QuarkException;
 class Join extends Builder
 {
     // Type of JOIN
-    protected $_type;
+    protected $type;
 
     // JOIN ...
-    protected $_table;
+    protected $table;
 
     // ON ...
-    protected $_on = array();
+    protected $on;
 
     // USING ...
-    protected $_using = array();
+    protected $using;
 
     /**
      * Creates a new JOIN statement for a table. Optionally, the type of JOIN
@@ -36,15 +36,15 @@ class Join extends Builder
      * @param   mixed   $table  column name or array($column, $alias) or object
      * @param   string  $type   type of JOIN: INNER, RIGHT, LEFT, etc
      */
-    public function __construct($table, $type = NULL)
+    public function __construct($table, $type = null)
     {
-        // Set the table to JOIN on
-        $this->_table = $table;
+        $this->on    = array();
+        $this->using = array();
 
-        if ($type !== NULL)
-        {
-            // Set the JOIN type
-            $this->_type = (string) $type;
+        $this->table = $table;
+
+        if (null !== $type) {
+            $this->type = (string) $type;
         }
     }
 
@@ -59,12 +59,11 @@ class Join extends Builder
      */
     public function on($c1, $op, $c2)
     {
-        if ( ! empty($this->_using))
-        {
+        if (!empty($this->using)) {
             throw new QuarkException('JOIN ... ON ... cannot be combined with JOIN ... USING ...');
         }
 
-        $this->_on[] = array($c1, $op, $c2);
+        $this->on[] = array($c1, $op, $c2);
 
         return $this;
     }
@@ -78,14 +77,13 @@ class Join extends Builder
      */
     public function using($columns)
     {
-        if ( ! empty($this->_on))
-        {
+        if (!empty($this->on)) {
             throw new QuarkException('JOIN ... ON ... cannot be combined with JOIN ... USING ...');
         }
 
         $columns = func_get_args();
 
-        $this->_using = array_merge($this->_using, $columns);
+        $this->using = array_merge($this->using, $columns);
 
         return $this;
     }
@@ -96,50 +94,35 @@ class Join extends Builder
      * @param   mixed  $db  Database instance or name of instance
      * @return  string
      */
-    public function compile($db = NULL)
+    public function compile($db = null)
     {
-        if ( ! is_object($db))
-        {
-            // Get the database instance
+        if (!is_object($db)) {
             $db = PDO::instance($db);
         }
 
-        if ($this->_type)
-        {
-            $sql = strtoupper($this->_type).' JOIN';
-        }
-        else
-        {
+        if ($this->type) {
+            $sql = strtoupper($this->type).' JOIN';
+        } else {
             $sql = 'JOIN';
         }
 
-        // Quote the table name that is being joined
-        $sql .= ' '.$db->quote_table($this->_table);
+        $sql .= ' '.$db->quoteTable($this->table);
 
-        if ( ! empty($this->_using))
-        {
-            // Quote and concat the columns
-            $sql .= ' USING ('.implode(', ', array_map(array($db, 'quote_column'), $this->_using)).')';
-        }
-        else
-        {
+        if (!empty($this->using)) {
+            $sql .= ' USING ('.implode(', ', array_map(array($db, 'quoteColumn'), $this->using)).')';
+        } else {
             $conditions = array();
-            foreach ($this->_on as $condition)
-            {
-                // Split the condition
+
+            foreach ($this->on as $condition) {
                 list($c1, $op, $c2) = $condition;
 
-                if ($op)
-                {
-                    // Make the operator uppercase and spaced
+                if ($op) {
                     $op = ' '.strtoupper($op);
                 }
 
-                // Quote each of the columns used for the condition
-                $conditions[] = $db->quote_column($c1).$op.' '.$db->quote_column($c2);
+                $conditions[] = $db->quoteColumn($c1).$op.' '.$db->quoteColumn($c2);
             }
 
-            // Concat the conditions "... AND ..."
             $sql .= ' ON ('.implode(' AND ', $conditions).')';
         }
 
@@ -148,10 +131,9 @@ class Join extends Builder
 
     public function reset()
     {
-        $this->_type =
-        $this->_table = NULL;
+        $this->type  = null;
+        $this->table = null;
 
-        $this->_on = array();
+        $this->on = array();
     }
-
 }

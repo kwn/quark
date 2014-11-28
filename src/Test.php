@@ -50,12 +50,8 @@ $qb = new \Quark\Database\Query\Builder\Select();
 $query = $qb
     ->select('id', 'username', 'pass')
     ->from('users', 'u')
-    ->where_open()
-        ->where('u.age', '>', 18)
-        ->or_where('u.adult', '=', 1)
-    ->where_close()
-    ->and_where_open()
-    ->where_close_empty();
+    ->where('u.age', '=', null)
+    ->compile();
 
 echo $query;
 echo "\n";

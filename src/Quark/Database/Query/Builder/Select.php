@@ -462,7 +462,7 @@ class Select extends Where
 
         $this->distinct = false;
 
-        $this->limit     = null;
+        $this->limit    = null;
         $this->offset   = null;
         $this->lastJoin = null;
 

@@ -279,5 +279,21 @@ class SelectTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame($expectedQuery, $query);
     }
+
+    public function testQueryWithMultipleOrderBy()
+    {
+        $qb = new \Quark\Database\Query\Builder\Select();
+
+        $query = $qb
+            ->select('id', 'username', 'pass')
+            ->from('users', 'u')
+            ->limit(10)
+            ->offset(10)
+            ->compile();
+
+        $expectedQuery = "SELECT id, username, pass FROM users, u LIMIT 10 OFFSET 10";
+
+        $this->assertSame($expectedQuery, $query);
+    }
 }
  

@@ -47,5 +47,50 @@ class WhereTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame($expectedQuery, $query);
     }
+
+    public function testWhereWithBetweenOperator()
+    {
+        $qb = new \Quark\Database\Query\Builder\Select();
+
+        $query = $qb
+            ->select('id', 'username', 'pass')
+            ->from('users', 'u')
+            ->where('u.age', 'BETWEEN', array(6, 18))
+            ->compile();
+
+        $expectedQuery = "SELECT id, username, pass FROM users, u WHERE u.age BETWEEN 6 AND 18";
+
+        $this->assertSame($expectedQuery, $query);
+    }
+
+    public function testWhereWithNullCondition()
+    {
+        $qb = new \Quark\Database\Query\Builder\Select();
+
+        $query = $qb
+            ->select('id', 'username', 'pass')
+            ->from('users', 'u')
+            ->where('u.age', '=', null)
+            ->compile();
+
+        $expectedQuery = "SELECT id, username, pass FROM users, u WHERE u.age IS NULL";
+
+        $this->assertSame($expectedQuery, $query);
+    }
+
+    public function testWhereWithNotNullCondition()
+    {
+        $qb = new \Quark\Database\Query\Builder\Select();
+
+        $query = $qb
+            ->select('id', 'username', 'pass')
+            ->from('users', 'u')
+            ->where('u.age', '!=', null)
+            ->compile();
+
+        $expectedQuery = "SELECT id, username, pass FROM users, u WHERE u.age IS NOT NULL";
+
+        $this->assertSame($expectedQuery, $query);
+    }
 }
  
