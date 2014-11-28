@@ -16,7 +16,7 @@ class Join extends Builder
      *
      * @var string
      */
-    private $type;
+    protected $type;
 
     /**
      * JOIN ...

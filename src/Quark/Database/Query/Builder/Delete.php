@@ -25,7 +25,11 @@ class Delete extends Where
      */
     public function __construct($table = null)
     {
-        $this->table = null;
+        $this->table   = null;
+
+        $this->where   = array();
+        $this->orderBy = array();
+        $this->limit   = null;
 
         if (null !== $table) {
             $this->table($table);
@@ -78,18 +82,23 @@ class Delete extends Where
             $query .= ' LIMIT '.$this->limit;
         }
 
-        $this->_sql = $query;
+        $this->sql = $query;
 
         return parent::compile($db);
     }
 
+    /**
+     * Reset query
+     *
+     * @return $this
+     */
     public function reset()
     {
         $this->table = null;
         $this->where = array();
 
-        $this->_parameters = array();
-        $this->_sql        = null;
+        $this->parameters = array();
+        $this->sql        = null;
 
         return $this;
     }

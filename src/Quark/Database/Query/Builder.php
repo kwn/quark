@@ -7,23 +7,29 @@ use Quark\Database\Query\Builder\Join;
 
 /**
  * Database query builder. See [Query Builder](/database/query/builder) for usage and examples.
- *
- * @package    Kohana/Database
- * @category   Query
- * @author     Kohana Team
- * @copyright  (c) 2008-2009 Kohana Team
- * @license    http://kohanaphp.com/license
  */
 abstract class Builder
 {
-    // Query type
-    protected $_type;
+    /**
+     * Query type
+     *
+     * @var int
+     */
+    protected $type;
 
-    // SQL statement
-    protected $_sql;
+    /**
+     * SQL statement
+     *
+     * @var string
+     */
+    protected $sql;
 
-    // Quoted query parameters
-    protected $_parameters = array();
+    /**
+     * Quoted query parameters
+     *
+     * @var array
+     */
+    protected $parameters;
 
     /**
      * Creates a new SQL query of the specified type.
@@ -33,8 +39,9 @@ abstract class Builder
      */
     public function __construct($type, $sql)
     {
-        $this->_type = $type;
-        $this->_sql = $sql;
+        $this->type       = $type;
+        $this->sql        = $sql;
+        $this->parameters = array();
     }
 
     /**
@@ -59,7 +66,7 @@ abstract class Builder
      */
     public function type()
     {
-        return $this->_type;
+        return $this->type;
     }
 
     /**
@@ -72,7 +79,7 @@ abstract class Builder
     public function param($param, $value)
     {
         // Add or overload a new parameter
-        $this->_parameters[$param] = $value;
+        $this->parameters[$param] = $value;
 
         return $this;
     }
@@ -87,7 +94,7 @@ abstract class Builder
     public function bind($param, & $var)
     {
         // Bind a value to a variable
-        $this->_parameters[$param] =& $var;
+        $this->parameters[$param] =& $var;
 
         return $this;
     }
@@ -101,7 +108,7 @@ abstract class Builder
     public function parameters(array $params)
     {
         // Merge the new parameters in
-        $this->_parameters = $params + $this->_parameters;
+        $this->parameters = $params + $this->parameters;
 
         return $this;
     }
@@ -121,11 +128,11 @@ abstract class Builder
         }
 
         // Import the SQL locally
-        $sql = $this->_sql;
+        $sql = $this->sql;
 
-        if (!empty($this->_parameters)) {
+        if (!empty($this->parameters)) {
             // Quote all of the values
-            $values = array_map(array($db, 'quote'), $this->_parameters);
+            $values = array_map(array($db, 'quote'), $this->parameters);
 
             // Replace the values in the SQL
             $sql = strtr($sql, $values);
@@ -207,19 +214,19 @@ abstract class Builder
                         // BETWEEN always has exactly two arguments
                         list($min, $max) = $value;
 
-                        if ((is_string($min) && array_key_exists($min, $this->_parameters)) === FALSE) {
+                        if ((is_string($min) && array_key_exists($min, $this->parameters)) === FALSE) {
                             // Quote the value, it is not a parameter
                             $min = $db->quote($min);
                         }
 
-                        if ((is_string($max) && array_key_exists($max, $this->_parameters)) === FALSE) {
+                        if ((is_string($max) && array_key_exists($max, $this->parameters)) === FALSE) {
                             // Quote the value, it is not a parameter
                             $max = $db->quote($max);
                         }
 
                         // Quote the min and max value
                         $value = $min . ' AND ' . $max;
-                    } elseif ((is_string($value) && array_key_exists($value, $this->_parameters)) === FALSE) {
+                    } elseif ((is_string($value) && array_key_exists($value, $this->parameters)) === FALSE) {
                         // Quote the value, it is not a parameter
                         $value = $db->quote($value);
                     }
@@ -263,7 +270,7 @@ abstract class Builder
             // Quote the column name
             $column = $db->quoteColumn($column);
 
-            if ((is_string($value) && array_key_exists($value, $this->_parameters)) === FALSE) {
+            if ((is_string($value) && array_key_exists($value, $this->parameters)) === FALSE) {
                 // Quote the value, it is not a parameter
                 $value = $db->quote($value);
             }

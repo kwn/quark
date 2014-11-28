@@ -146,7 +146,7 @@ class Insert extends Builder
             
             foreach ($this->values as $group) {
                 foreach ($group as $offset => $value) {
-                    if ((is_string($value) && false === array_key_exists($value, $this->_parameters))) {
+                    if ((is_string($value) && false === array_key_exists($value, $this->parameters))) {
                         $group[$offset] = $db->quote($value);
                     }
                 }
@@ -159,7 +159,7 @@ class Insert extends Builder
             $query .= (string) $this->values;
         }
 
-        $this->_sql = $query;
+        $this->sql = $query;
 
         return parent::compile($db);
     }
@@ -175,8 +175,8 @@ class Insert extends Builder
         $this->columns = array();
         $this->values  = array();
 
-        $this->_parameters = array();
-        $this->_sql        = null;
+        $this->parameters = array();
+        $this->sql        = null;
 
         return $this;
     }

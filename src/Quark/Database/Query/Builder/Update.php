@@ -30,8 +30,12 @@ class Update extends Where
      */
     public function __construct($table = null)
     {
-        $this->table = null;
-        $this->set   = array();
+        $this->table   = null;
+        $this->set     = array();
+
+        $this->where   = array();
+        $this->orderBy = array();
+        $this->limit   = null;
 
         if (null !== $table) {
             $this->table($table);
@@ -110,23 +114,26 @@ class Update extends Where
             $query .= ' LIMIT '.$this->limit;
         }
 
-        $this->_sql = $query;
+        $this->sql = $query;
 
         return parent::compile($db);
     }
 
+    /**
+     * Reset query
+     *
+     * @return $this
+     */
     public function reset()
     {
         $this->table = null;
-
         $this->set   = array();
-        $this->where = array();
 
+        $this->where = array();
         $this->limit = null;
 
-        $this->_parameters = array();
-
-        $this->_sql = null;
+        $this->parameters = array();
+        $this->sql        = null;
 
         return $this;
     }

@@ -91,6 +91,10 @@ class Select extends Where
         $this->union    = array();
         $this->lastJoin = null;
 
+        $this->where    = array();
+        $this->orderBy  = array();
+        $this->limit    = null;
+
         if (!empty($columns)) {
             $this->select = $columns;
         }
@@ -201,7 +205,7 @@ class Select extends Where
     /**
      * Creates a "GROUP BY ..." filter.
      *
-     * @param   mixed   $columns  column name or array($column, $alias) or object
+     * @param   mixed  $columns  column name or array($column, $alias) or object
      * @return  $this
      */
     public function group_by($columns)
@@ -434,11 +438,16 @@ class Select extends Where
             }
         }
 
-        $this->_sql = $query;
+        $this->sql = $query;
 
         return parent::compile($db);
     }
 
+    /**
+     * Reset query
+     *
+     * @return $this
+     */
     public function reset()
     {
         $this->select   = array();
@@ -455,8 +464,8 @@ class Select extends Where
         $this->orderBy  = array();
         $this->limit    = null;
 
-        $this->_parameters = array();
-        $this->_sql        = null;
+        $this->parameters = array();
+        $this->sql        = null;
 
         return $this;
     }

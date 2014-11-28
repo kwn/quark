@@ -14,21 +14,21 @@ abstract class Where extends Builder
      *
      * @var array
      */
-    protected $where = array();
+    protected $where;
 
     /**
      * ORDER BY ...
      *
      * @var array
      */
-    protected $orderBy = array();
+    protected $orderBy;
 
     /**
      * LIMIT ...
      *
      * @var null|integer
      */
-    protected $limit = null;
+    protected $limit;
 
     /**
      * Alias of and_where()
