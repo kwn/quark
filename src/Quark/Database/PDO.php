@@ -109,9 +109,9 @@ class PDO
         // Extract the connection parameters, adding required variabels
         extract($this->_config['connection'] + array(
             'dsn'        => '',
-            'username'   => NULL,
-            'password'   => NULL,
-            'persistent' => FALSE,
+            'username'   => null,
+            'password'   => null,
+            'persistent' => false,
         ));
 
         // Clear the connection parameters for security
@@ -123,7 +123,7 @@ class PDO
         if ( ! empty($persistent))
         {
             // Make the connection persistent
-            $options[\PDO::ATTR_PERSISTENT] = TRUE;
+            $options[\PDO::ATTR_PERSISTENT] = true;
         }
 
         try
@@ -148,11 +148,11 @@ class PDO
     public function disconnect()
     {
         // Destroy the PDO object
-        $this->_connection = NULL;
+        $this->_connection = null;
 
         unset(self::$instances[$this->_instance]);
 
-        return TRUE;
+        return true;
     }
 
     /**
@@ -188,9 +188,9 @@ class PDO
      * @throws  \Exception
      * @return  PDO
      */
-    public static function instance($name = NULL, array $config = NULL)
+    public static function instance($name = null, array $config = null)
     {
-        if ($name === NULL)
+        if ($name === null)
         {
             // Use the default instance name
             $name = self::$default;
@@ -198,7 +198,7 @@ class PDO
 
         if ( ! isset(self::$instances[$name]))
         {
-            if ($config === NULL)
+            if ($config === null)
             {
                 // Load the configuration for this database
                 $config = array(
@@ -207,11 +207,11 @@ class PDO
                         'dsn'        => 'mysql:host=localhost;dbname=test',
                         'username'   => 'test',
                         'password'   => 'test',
-                        'persistent' => FALSE,
+                        'persistent' => false,
                     ),
                     'table_prefix' => '',
                     'charset'      => 'utf8',
-                    'caching'      => FALSE,
+                    'caching'      => false,
                 );
             }
 
@@ -234,35 +234,6 @@ class PDO
     }
 
     /**
-     * Extracts the text between parentheses, if any.
-     *
-     *     // Returns: array('CHAR', '6')
-     *     list($type, $length) = $db->_parse_type('CHAR(6)');
-     *
-     * @param   string  $type
-     * @return  array   list containing the type and length, if any
-     */
-    protected function _parse_type($type)
-    {
-        if (($open = strpos($type, '(')) === FALSE)
-        {
-            // No length specified
-            return array($type, NULL);
-        }
-
-        // Closing parenthesis
-        $close = strrpos($type, ')', $open);
-
-        // Length without parentheses
-        $length = substr($type, $open + 1, $close - 1 - $open);
-
-        // Type without the length
-        $type = substr($type, 0, $open).substr($type, $close + 1);
-
-        return array($type, $length);
-    }
-
-    /**
      * Return the table prefix defined in the current configuration.
      *
      *     $prefix = $db->table_prefix();
@@ -277,7 +248,7 @@ class PDO
     /**
      * Quote a value for an SQL query.
      *
-     *     $db->quote(NULL);   // 'NULL'
+     *     $db->quote(null);   // 'null'
      *     $db->quote(10);     // 10
      *     $db->quote('fred'); // 'fred'
      *
@@ -292,61 +263,29 @@ class PDO
      */
     public function quote($value)
     {
-        if ($value === NULL)
-        {
+        if ($value === null) {
             return 'NULL';
-        }
-        elseif ($value === TRUE)
-        {
+        } elseif ($value === true) {
             return "'1'";
-        }
-        elseif ($value === FALSE)
-        {
+        } elseif ($value === false) {
             return "'0'";
-        }
-        elseif (is_object($value))
-        {
-            if ($value instanceof Builder)
-            {
-                // Create a sub-query
+        } elseif (is_object($value)) {
+            if ($value instanceof Builder) {
                 return '('.$value->compile($this).')';
-            }
-            elseif ($value instanceof Expression)
-            {
-                // Compile the expression
+            } elseif ($value instanceof Expression) {
                 return $value->compile($this);
-            }
-            else
-            {
-                // Convert the object to a string
+            } else {
                 return $this->quote( (string) $value);
             }
-        }
-        elseif (is_array($value))
-        {
+        } elseif (is_array($value)) {
             return '('.implode(', ', array_map(array($this, __FUNCTION__), $value)).')';
-        }
-        elseif (is_int($value))
-        {
+        } elseif (is_int($value)) {
             return (int) $value;
-        }
-        elseif (is_float($value))
-        {
-            // Convert to non-locale aware float to prevent possible commas
+        } elseif (is_float($value)) {
             return sprintf('%F', $value);
         }
 
         return $this->escape($value);
-    }
-
-    /**
-     * @param $column
-     * @return string
-     * @deprecated
-     */
-    public function quote_column($column)
-    {
-        return $this->quoteColumn($column);
     }
 
     /**
@@ -370,82 +309,49 @@ class PDO
      */
     public function quoteColumn($column)
     {
-        // Identifiers are escaped by repeating them
         $escaped_identifier = $this->_identifier.$this->_identifier;
 
-        if (is_array($column))
-        {
+        if (is_array($column)) {
             list($column, $alias) = $column;
             $alias = str_replace($this->_identifier, $escaped_identifier, $alias);
         }
 
-        if ($column instanceof Builder)
-        {
-            // Create a sub-query
+        if ($column instanceof Builder) {
             $column = '('.$column->compile($this).')';
-        }
-        elseif ($column instanceof Expression)
-        {
-            // Compile the expression
+        } elseif ($column instanceof Expression) {
             $column = $column->compile($this);
-        }
-        else
-        {
-            // Convert to a string
+        } else {
             $column = (string) $column;
-
             $column = str_replace($this->_identifier, $escaped_identifier, $column);
 
-            if ($column === '*')
-            {
+            if ($column === '*') {
                 return $column;
-            }
-            elseif (strpos($column, '.') !== FALSE)
-            {
+            } elseif (strpos($column, '.') !== false) {
                 $parts = explode('.', $column);
 
-                if ($prefix = $this->table_prefix())
-                {
-                    // Get the offset of the table name, 2nd-to-last part
+                if ($prefix = $this->table_prefix()) {
                     $offset = count($parts) - 2;
 
-                    // Add the table prefix to the table name
                     $parts[$offset] = $prefix.$parts[$offset];
                 }
 
-                foreach ($parts as & $part)
-                {
-                    if ($part !== '*')
-                    {
-                        // Quote each of the parts
+                foreach ($parts as & $part) {
+                    if ($part !== '*') {
                         $part = $this->_identifier.$part.$this->_identifier;
                     }
                 }
 
                 $column = implode('.', $parts);
-            }
-            else
-            {
+            } else {
                 $column = $this->_identifier.$column.$this->_identifier;
             }
         }
 
-        if (isset($alias))
-        {
+        if (isset($alias)) {
             $column .= ' AS '.$this->_identifier.$alias.$this->_identifier;
         }
 
         return $column;
-    }
-
-    /**
-     * @param $table
-     * @return string
-     * @deprecated
-     */
-    public function quote_table($table)
-    {
-        return $this->quoteTable($table);
     }
 
     /**
@@ -465,77 +371,44 @@ class PDO
      */
     public function quoteTable($table)
     {
-        // Identifiers are escaped by repeating them
         $escaped_identifier = $this->_identifier.$this->_identifier;
 
-        if (is_array($table))
-        {
+        if (is_array($table)) {
             list($table, $alias) = $table;
             $alias = str_replace($this->_identifier, $escaped_identifier, $alias);
         }
 
-        if ($table instanceof Builder)
-        {
-            // Create a sub-query
+        if ($table instanceof Builder) {
             $table = '('.$table->compile($this).')';
-        }
-        elseif ($table instanceof Expression)
-        {
-            // Compile the expression
+        } elseif ($table instanceof Expression) {
             $table = $table->compile($this);
-        }
-        else
-        {
-            // Convert to a string
+        } else {
             $table = (string) $table;
-
             $table = str_replace($this->_identifier, $escaped_identifier, $table);
 
-            if (strpos($table, '.') !== FALSE)
-            {
+            if (strpos($table, '.') !== false) {
                 $parts = explode('.', $table);
 
-                if ($prefix = $this->table_prefix())
-                {
-                    // Get the offset of the table name, last part
+                if ($prefix = $this->table_prefix()) {
                     $offset = count($parts) - 1;
-
-                    // Add the table prefix to the table name
                     $parts[$offset] = $prefix.$parts[$offset];
                 }
 
-                foreach ($parts as & $part)
-                {
-                    // Quote each of the parts
+                foreach ($parts as & $part) {
                     $part = $this->_identifier.$part.$this->_identifier;
                 }
 
                 $table = implode('.', $parts);
-            }
-            else
-            {
-                // Add the table prefix
+            } else {
                 $table = $this->_identifier.$this->table_prefix().$table.$this->_identifier;
             }
         }
 
-        if (isset($alias))
-        {
-            // Attach table prefix to alias
+        if (isset($alias)) {
             $table .= ' AS '.$this->_identifier.$this->table_prefix().$alias.$this->_identifier;
         }
 
         return $table;
-    }
-
-    /**
-     * @param $value
-     * @return string
-     * @deprecated
-     */
-    public function quote_identifier($value)
-    {
-        return $this->quoteIdentifier($value);
     }
 
     /**
@@ -551,52 +424,35 @@ class PDO
      */
     public function quoteIdentifier($value)
     {
-        // Identifiers are escaped by repeating them
         $escaped_identifier = $this->_identifier.$this->_identifier;
 
-        if (is_array($value))
-        {
+        if (is_array($value)) {
             list($value, $alias) = $value;
             $alias = str_replace($this->_identifier, $escaped_identifier, $alias);
         }
 
-        if ($value instanceof Builder)
-        {
-            // Create a sub-query
+        if ($value instanceof Builder) {
             $value = '('.$value->compile($this).')';
-        }
-        elseif ($value instanceof Expression)
-        {
-            // Compile the expression
+        } elseif ($value instanceof Expression) {
             $value = $value->compile($this);
-        }
-        else
-        {
-            // Convert to a string
+        } else {
             $value = (string) $value;
-
             $value = str_replace($this->_identifier, $escaped_identifier, $value);
 
-            if (strpos($value, '.') !== FALSE)
-            {
+            if (strpos($value, '.') !== false) {
                 $parts = explode('.', $value);
 
-                foreach ($parts as & $part)
-                {
-                    // Quote each of the parts
+                foreach ($parts as & $part) {
                     $part = $this->_identifier.$part.$this->_identifier;
                 }
 
                 $value = implode('.', $parts);
-            }
-            else
-            {
+            } else {
                 $value = $this->_identifier.$value.$this->_identifier;
             }
         }
 
-        if (isset($alias))
-        {
+        if (isset($alias)) {
             $value .= ' AS '.$this->_identifier.$alias.$this->_identifier;
         }
 

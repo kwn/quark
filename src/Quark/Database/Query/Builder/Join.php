@@ -142,12 +142,14 @@ class Join extends Builder
     /**
      * Reset JOIN statement
      *
-     * @return void
+     * @return $this
      */
     public function reset()
     {
         $this->type  = null;
         $this->table = null;
         $this->on    = array();
+
+        return $this;
     }
 }

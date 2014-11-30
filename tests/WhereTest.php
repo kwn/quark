@@ -11,11 +11,11 @@ class WhereTest extends PHPUnit_Framework_TestCase
             ->from('users', 'u')
             ->where_open()
                 ->where('u.age', '>', 18)
-                ->or_where('u.adult', '=', 1)
+                ->or_where('u.adult', '=', true)
             ->where_close()
             ->and_where_open()
                 ->where('u.allowed', '=', 1)
-                ->and_where('u.signed', '=', 1)
+                ->and_where('u.signed', '=', false)
             ->and_where_close()
             ->or_where_open()
                 ->where('u.username', '=', 'test')
@@ -23,7 +23,7 @@ class WhereTest extends PHPUnit_Framework_TestCase
             ->or_where_close()
             ->compile();
 
-        $expectedQuery = "SELECT id, username, pass FROM users, u WHERE (u.age > 18 OR u.adult = 1) AND (u.allowed = 1 AND u.signed = 1) OR (u.username = 'test' AND u.color = 'blue')";
+        $expectedQuery = "SELECT id, username, pass FROM users, u WHERE (u.age > 18 OR u.adult = '1') AND (u.allowed = 1 AND u.signed = '0') OR (u.username = 'test' AND u.color = 'blue')";
 
         $this->assertSame($expectedQuery, $query);
     }

@@ -52,7 +52,6 @@ abstract class Builder
     public function __toString()
     {
         try {
-            // Return the SQL string
             return $this->compile(PDO::instance());
         } catch (\Exception $e) {
             return $e->getMessage();
@@ -120,21 +119,17 @@ abstract class Builder
      * @param  mixed $db Database instance or name of instance
      * @return string
      */
-    public function compile($db = NULL)
+    public function compile($db = null)
     {
         if (!is_object($db)) {
-            // Get the database instance
             $db = PDO::instance($db);
         }
 
-        // Import the SQL locally
         $sql = $this->sql;
 
         if (!empty($this->parameters)) {
-            // Quote all of the values
             $values = array_map(array($db, 'quote'), $this->parameters);
 
-            // Replace the values in the SQL
             $sql = strtr($sql, $values);
         }
 
@@ -152,10 +147,8 @@ abstract class Builder
     {
         $statements = array();
 
-        foreach ($joins as $join)
-        {
+        foreach ($joins as $join) {
             /** @var Join $join */
-            // Compile each of the join statements
             $statements[] = $join->compile($db);
         }
 
@@ -172,7 +165,7 @@ abstract class Builder
      */
     protected function _compile_conditions(PDO $db, array $conditions)
     {
-        $last_condition = NULL;
+        $last_condition = null;
 
         $sql = '';
 
@@ -197,12 +190,12 @@ abstract class Builder
                     // Split the condition
                     list($column, $op, $value) = $condition;
 
-                    if ($value === NULL) {
+                    if ($value === null) {
                         if ($op === '=') {
-                            // Convert "val = NULL" to "val IS NULL"
+                            // Convert "val = null" to "val IS null"
                             $op = 'IS';
                         } elseif ($op === '!=') {
-                            // Convert "val != NULL" to "valu IS NOT NULL"
+                            // Convert "val != null" to "valu IS NOT null"
                             $op = 'IS NOT';
                         }
                     }
@@ -214,19 +207,19 @@ abstract class Builder
                         // BETWEEN always has exactly two arguments
                         list($min, $max) = $value;
 
-                        if ((is_string($min) && array_key_exists($min, $this->parameters)) === FALSE) {
+                        if ((is_string($min) && array_key_exists($min, $this->parameters)) === false) {
                             // Quote the value, it is not a parameter
                             $min = $db->quote($min);
                         }
 
-                        if ((is_string($max) && array_key_exists($max, $this->parameters)) === FALSE) {
+                        if ((is_string($max) && array_key_exists($max, $this->parameters)) === false) {
                             // Quote the value, it is not a parameter
                             $max = $db->quote($max);
                         }
 
                         // Quote the min and max value
                         $value = $min . ' AND ' . $max;
-                    } elseif ((is_string($value) && array_key_exists($value, $this->parameters)) === FALSE) {
+                    } elseif ((is_string($value) && array_key_exists($value, $this->parameters)) === false) {
                         // Quote the value, it is not a parameter
                         $value = $db->quote($value);
                     }
@@ -270,7 +263,7 @@ abstract class Builder
             // Quote the column name
             $column = $db->quoteColumn($column);
 
-            if ((is_string($value) && array_key_exists($value, $this->parameters)) === FALSE) {
+            if ((is_string($value) && array_key_exists($value, $this->parameters)) === false) {
                 // Quote the value, it is not a parameter
                 $value = $db->quote($value);
             }

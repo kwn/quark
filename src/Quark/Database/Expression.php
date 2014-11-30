@@ -12,20 +12,22 @@ namespace Quark\Database;
  *     $query = DB::select(array(DB::expr('CONCAT(first_name, last_name)'), 'full_name')));
  *
  * More examples are available on the [Query Builder](database/query/builder#database-expressions) page
- * 
- * @package    Kohana/Database
- * @category   Base
- * @author     Kohana Team
- * @copyright  (c) 2009 Kohana Team
- * @license    http://kohanaphp.com/license
  */
 class Expression
 {
-    // Unquoted parameters
-    protected $_parameters;
+    /**
+     * Unquoted parameters
+     *
+     * @var array
+     */
+    protected $parameters;
 
-    // Raw expression string
-    protected $_value;
+    /**
+     * Raw expression string
+     *
+     * @var string
+     */
+    protected $value;
 
     /**
      * Sets the expression string.
@@ -38,9 +40,8 @@ class Expression
      */
     public function __construct($value, $parameters = array())
     {
-        // Set the expression string
-        $this->_value = $value;
-        $this->_parameters = $parameters;
+        $this->value = $value;
+        $this->parameters = $parameters;
     }
 
     /**
@@ -52,7 +53,7 @@ class Expression
      */
     public function bind($param, & $var)
     {
-        $this->_parameters[$param] =& $var;
+        $this->parameters[$param] =& $var;
 
         return $this;
     }
@@ -66,7 +67,7 @@ class Expression
      */
     public function param($param, $value)
     {
-        $this->_parameters[$param] = $value;
+        $this->parameters[$param] = $value;
 
         return $this;
     }
@@ -79,7 +80,7 @@ class Expression
      */
     public function parameters(array $params)
     {
-        $this->_parameters = $params + $this->_parameters;
+        $this->parameters = $params + $this->parameters;
 
         return $this;
     }
@@ -93,7 +94,7 @@ class Expression
      */
     public function value()
     {
-        return (string) $this->_value;
+        return (string) $this->value;
     }
 
     /**
@@ -118,20 +119,15 @@ class Expression
      */
     public function compile($db = NULL)
     {
-        if ( ! is_object($db))
-        {
-            // Get the database instance
+        if (!is_object($db)) {
             $db = PDO::instance($db);
         }
 
         $value = $this->value();
 
-        if ( ! empty($this->_parameters))
-        {
-            // Quote all of the parameter values
-            $params = array_map(array($db, 'quote'), $this->_parameters);
+        if (!empty($this->parameters)) {
+            $params = array_map(array($db, 'quote'), $this->parameters);
 
-            // Replace the values in the expression
             $value = strtr($value, $params);
         }
 
