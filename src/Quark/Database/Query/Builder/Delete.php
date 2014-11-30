@@ -96,9 +96,7 @@ class Delete extends Where
     {
         $this->table = null;
         $this->where = array();
-
-        $this->parameters = array();
-        $this->sql        = null;
+        $this->sql   = null;
 
         return $this;
     }

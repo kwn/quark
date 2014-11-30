@@ -55,10 +55,10 @@ class WhereTest extends PHPUnit_Framework_TestCase
         $query = $qb
             ->select('id', 'username', 'pass')
             ->from('users', 'u')
-            ->where('u.age', 'BETWEEN', array(6, 18))
+            ->where('u.age', 'BETWEEN', array(6.5, 18))
             ->compile();
 
-        $expectedQuery = "SELECT id, username, pass FROM users, u WHERE u.age BETWEEN 6 AND 18";
+        $expectedQuery = "SELECT id, username, pass FROM users, u WHERE u.age BETWEEN 6.500000 AND 18";
 
         $this->assertSame($expectedQuery, $query);
     }

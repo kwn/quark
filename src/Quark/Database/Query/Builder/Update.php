@@ -132,8 +132,7 @@ class Update extends Where
         $this->where = array();
         $this->limit = null;
 
-        $this->parameters = array();
-        $this->sql        = null;
+        $this->sql   = null;
 
         return $this;
     }
