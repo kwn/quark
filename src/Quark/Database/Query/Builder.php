@@ -81,7 +81,7 @@ abstract class Builder
      * @param   array $joins join statements
      * @return  string
      */
-    protected function _compile_join(PDO $db, array $joins)
+    protected function compileJoin(PDO $db, array $joins)
     {
         $statements = array();
 
@@ -101,7 +101,7 @@ abstract class Builder
      * @param  array $conditions condition statements
      * @return string
      */
-    protected function _compile_conditions(PDO $db, array $conditions)
+    protected function compileConditions(PDO $db, array $conditions)
     {
         $last_condition = null;
 
@@ -170,7 +170,7 @@ abstract class Builder
      * @param  array $values updated values
      * @return string
      */
-    protected function _compile_set(PDO $db, array $values)
+    protected function compileSet(PDO $db, array $values)
     {
         $set = array();
 
@@ -193,7 +193,7 @@ abstract class Builder
      * @param  array $columns
      * @return string
      */
-    protected function _compile_group_by(PDO $db, array $columns)
+    protected function compileGroupBy(PDO $db, array $columns)
     {
         $group = array();
 
@@ -217,7 +217,7 @@ abstract class Builder
      * @param  array $columns sorting columns
      * @return string
      */
-    protected function _compile_order_by(PDO $db, array $columns)
+    protected function compileOrderBy(PDO $db, array $columns)
     {
         $sort = array();
 

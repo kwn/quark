@@ -71,11 +71,11 @@ class Delete extends Where
         $query = 'DELETE FROM '.$db->quoteTable($this->table);
 
         if (!empty($this->where)) {
-            $query .= ' WHERE '.$this->_compile_conditions($db, $this->where);
+            $query .= ' WHERE '.$this->compileConditions($db, $this->where);
         }
 
         if (!empty($this->orderBy)) {
-            $query .= ' '.$this->_compile_order_by($db, $this->orderBy);
+            $query .= ' '.$this->compileOrderBy($db, $this->orderBy);
         }
 
         if (null !== $this->limit) {

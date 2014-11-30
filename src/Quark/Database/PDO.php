@@ -186,7 +186,6 @@ class PDO
     {
         if ($name === null)
         {
-            // Use the default instance name
             $name = self::$default;
         }
 

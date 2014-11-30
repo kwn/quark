@@ -397,23 +397,23 @@ class Select extends Where
         }
 
         if (!empty($this->join)) {
-            $query .= ' '.$this->_compile_join($db, $this->join);
+            $query .= ' '.$this->compileJoin($db, $this->join);
         }
 
         if (!empty($this->where)) {
-            $query .= ' WHERE '.$this->_compile_conditions($db, $this->where);
+            $query .= ' WHERE '.$this->compileConditions($db, $this->where);
         }
 
         if (!empty($this->groupBy)) {
-            $query .= ' '.$this->_compile_group_by($db, $this->groupBy);
+            $query .= ' '.$this->compileGroupBy($db, $this->groupBy);
         }
 
         if (!empty($this->having)) {
-            $query .= ' HAVING '.$this->_compile_conditions($db, $this->having);
+            $query .= ' HAVING '.$this->compileConditions($db, $this->having);
         }
 
         if (!empty($this->orderBy)) {
-            $query .= ' '.$this->_compile_order_by($db, $this->orderBy);
+            $query .= ' '.$this->compileOrderBy($db, $this->orderBy);
         }
 
         if ($this->limit !== null) {
@@ -464,8 +464,7 @@ class Select extends Where
         $this->orderBy  = array();
         $this->limit    = null;
 
-        $this->parameters = array();
-        $this->sql        = null;
+        $this->sql      = null;
 
         return $this;
     }

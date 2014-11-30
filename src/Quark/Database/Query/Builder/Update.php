@@ -100,14 +100,14 @@ class Update extends Where
 
         $query = 'UPDATE '.$db->quoteTable($this->table);
 
-        $query .= ' SET '.$this->_compile_set($db, $this->set);
+        $query .= ' SET '.$this->compileSet($db, $this->set);
 
         if (!empty($this->where)) {
-            $query .= ' WHERE '.$this->_compile_conditions($db, $this->where);
+            $query .= ' WHERE '.$this->compileConditions($db, $this->where);
         }
 
         if (!empty($this->orderBy)) {
-            $query .= ' '.$this->_compile_order_by($db, $this->orderBy);
+            $query .= ' '.$this->compileOrderBy($db, $this->orderBy);
         }
 
         if ($this->limit !== null) {
