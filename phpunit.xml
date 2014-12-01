@@ -14,6 +14,6 @@
 
     <logging>
         <log type="coverage-text" target="php://stdout" charset="UTF-8" yui="true" highlight="true" lowUpperBound="50" highLowerBound="80"/>
-        <log type="coverage-html" target="tests/coverage" charset="UTF-8" highlight="true" lowUpperBound="50" highLowerBound="80"/>
+        <log type="coverage-html" target="build/coverage" charset="UTF-8" highlight="true" lowUpperBound="50" highLowerBound="80"/>
     </logging>
 </phpunit>
