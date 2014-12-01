@@ -1,7 +1,8 @@
 {
     "name":        "kwn/quark",
+    "type":        "library",
     "description": "Database query builder for PDO based on Kohana Database module",
-    "homepage":    "https://github.com/kwn",
+    "homepage":    "https://github.com/kwn/quark",
     "license":     "MIT",
     "keywords":    ["query", "builder", "database", "kohana", "quark"],
     "authors": [
@@ -19,15 +20,13 @@
         }
     ],
     "require": {
-        "php": ">=5.3.3"
+        "php":     ">=5.3.3",
+        "ext-pdo": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "3.7.*"
     },
-    "suggest": {
-        "ext-pdo":     "*"
-    },
     "autoload": {
-        "psr-0": { "Quark": "src/" }
+        "psr-0": { "Quark": "src" }
     }
 }
