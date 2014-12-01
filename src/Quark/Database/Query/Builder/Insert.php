@@ -2,7 +2,6 @@
 
 namespace Quark\Database\Query\Builder;
 
-use Quark\Database\PDO;
 use Quark\Database\Query\Builder;
 use Quark\DB;
 use Quark\Exception\QuarkException;
@@ -128,18 +127,13 @@ class Insert extends Builder
     /**
      * Compile the SQL query and return it.
      *
-     * @param   mixed  $db  Database instance or name of instance
      * @return  string
      */
-    public function compile($db = null)
+    public function compile()
     {
-        if (!is_object($db)) {
-            $db = PDO::instance($db);
-        }
+        $query = 'INSERT INTO '.$this->quoter->quoteTable($this->table);
 
-        $query = 'INSERT INTO '.$db->quoteTable($this->table);
-
-        $query .= ' ('.implode(', ', array_map(array($db, 'quoteColumn'), $this->columns)).') ';
+        $query .= ' ('.implode(', ', array_map(array($this->quoter, 'quoteColumn'), $this->columns)).') ';
 
         if (is_array($this->values)) {
             $groups = array();
@@ -147,7 +141,7 @@ class Insert extends Builder
             foreach ($this->values as $group) {
                 foreach ($group as $offset => $value) {
                     if ((is_string($value))) {
-                        $group[$offset] = $db->quote($value);
+                        $group[$offset] = $this->quoter->quote($value);
                     }
                 }
 
@@ -161,7 +155,7 @@ class Insert extends Builder
 
         $this->sql = $query;
 
-        return parent::compile($db);
+        return parent::compile();
     }
 
     /**

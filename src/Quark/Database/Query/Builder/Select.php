@@ -2,7 +2,6 @@
 
 namespace Quark\Database\Query\Builder;
 
-use Quark\Database\PDO;
 use Quark\DB;
 use Quark\Exception\QuarkException;
 
@@ -367,18 +366,13 @@ class Select extends Where
     /**
      * Compile the SQL query and return it.
      *
-     * @param   mixed  $db  Database instance or name of instance
      * @return  string
      */
-    public function compile($db = null)
+    public function compile()
     {
-        if (!is_object($db)) {
-            $db = PDO::instance($db);
-        }
+        $quote_column = array($this->quoter, 'quoteColumn');
 
-        $quote_column = array($db, 'quoteColumn');
-
-        $quote_table = array($db, 'quoteTable');
+        $quote_table = array($this->quoter, 'quoteTable');
 
         $query = 'SELECT ';
 
@@ -397,23 +391,23 @@ class Select extends Where
         }
 
         if (!empty($this->join)) {
-            $query .= ' '.$this->compileJoin($db, $this->join);
+            $query .= ' '.$this->compileJoin($this->join);
         }
 
         if (!empty($this->where)) {
-            $query .= ' WHERE '.$this->compileConditions($db, $this->where);
+            $query .= ' WHERE '.$this->compileConditions($this->where);
         }
 
         if (!empty($this->groupBy)) {
-            $query .= ' '.$this->compileGroupBy($db, $this->groupBy);
+            $query .= ' '.$this->compileGroupBy($this->groupBy);
         }
 
         if (!empty($this->having)) {
-            $query .= ' HAVING '.$this->compileConditions($db, $this->having);
+            $query .= ' HAVING '.$this->compileConditions($this->having);
         }
 
         if (!empty($this->orderBy)) {
-            $query .= ' '.$this->compileOrderBy($db, $this->orderBy);
+            $query .= ' '.$this->compileOrderBy($this->orderBy);
         }
 
         if ($this->limit !== null) {
@@ -434,13 +428,13 @@ class Select extends Where
                     $query .= 'ALL ';
                 }
 
-                $query .= '('.$u['select']->compile($db).')';
+                $query .= '('.$u['select']->compile().')';
             }
         }
 
         $this->sql = $query;
 
-        return parent::compile($db);
+        return parent::compile();
     }
 
     /**

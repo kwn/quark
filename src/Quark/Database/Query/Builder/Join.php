@@ -2,8 +2,8 @@
 
 namespace Quark\Database\Query\Builder;
 
-use Quark\Database\PDO;
 use Quark\Database\Query\Builder;
+use Quark\Database\Quoter;
 use Quark\Exception\QuarkException;
 
 /**
@@ -40,6 +40,11 @@ class Join extends Builder
     private $using;
 
     /**
+     * @var \Quark\Database\Quoter
+     */
+    protected $quoter;
+
+    /**
      * Creates a new JOIN statement for a table. Optionally, the type of JOIN
      * can be specified as the second parameter.
      *
@@ -56,6 +61,8 @@ class Join extends Builder
         if (null !== $type) {
             $this->type = (string) $type;
         }
+
+        $this->quoter = Quoter::instance();
     }
 
     /**
@@ -101,25 +108,20 @@ class Join extends Builder
     /**
      * Compile the SQL partial for a JOIN statement and return it.
      *
-     * @param   mixed  $db  Database instance or name of instance
      * @return  string
      */
-    public function compile($db = null)
+    public function compile()
     {
-        if (!is_object($db)) {
-            $db = PDO::instance($db);
-        }
-
         if (null !== $this->type) {
             $sql = strtoupper($this->type).' JOIN';
         } else {
             $sql = 'JOIN';
         }
 
-        $sql .= ' '.$db->quoteTable($this->table);
+        $sql .= ' '.$this->quoter->quoteTable($this->table);
 
         if (!empty($this->using)) {
-            $sql .= ' USING ('.implode(', ', array_map(array($db, 'quoteColumn'), $this->using)).')';
+            $sql .= ' USING ('.implode(', ', array_map(array($this->quoter, 'quoteColumn'), $this->using)).')';
         } else {
             $conditions = array();
 
@@ -130,7 +132,7 @@ class Join extends Builder
                     $op = ' '.strtoupper($op);
                 }
 
-                $conditions[] = $db->quoteColumn($c1).$op.' '.$db->quoteColumn($c2);
+                $conditions[] = $this->quoter->quoteColumn($c1).$op.' '.$this->quoter->quoteColumn($c2);
             }
 
             $sql .= ' ON ('.implode(' AND ', $conditions).')';

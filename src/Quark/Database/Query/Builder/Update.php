@@ -1,7 +1,7 @@
 <?php
 
 namespace Quark\Database\Query\Builder;
-use Quark\Database\PDO;
+
 use Quark\DB;
 
 /**
@@ -92,22 +92,18 @@ class Update extends Where
      * @param   mixed  $db  Database instance or name of instance
      * @return  string
      */
-    public function compile($db = null)
+    public function compile()
     {
-        if (!is_object($db)) {
-            $db = PDO::instance($db);
-        }
+        $query = 'UPDATE '.$this->quoter->quoteTable($this->table);
 
-        $query = 'UPDATE '.$db->quoteTable($this->table);
-
-        $query .= ' SET '.$this->compileSet($db, $this->set);
+        $query .= ' SET '.$this->compileSet($this->set);
 
         if (!empty($this->where)) {
-            $query .= ' WHERE '.$this->compileConditions($db, $this->where);
+            $query .= ' WHERE '.$this->compileConditions($this->where);
         }
 
         if (!empty($this->orderBy)) {
-            $query .= ' '.$this->compileOrderBy($db, $this->orderBy);
+            $query .= ' '.$this->compileOrderBy($this->orderBy);
         }
 
         if ($this->limit !== null) {
@@ -116,7 +112,7 @@ class Update extends Where
 
         $this->sql = $query;
 
-        return parent::compile($db);
+        return parent::compile();
     }
 
     /**

@@ -9,7 +9,7 @@ use Quark\Database\Query\Builder;
 /**
  * PDO database connection.
  */
-class PDO
+class Quoter
 {
     // Instance name
     protected $_instance;
@@ -180,7 +180,7 @@ class PDO
      * @param   string $name instance name
      * @param   array $config configuration parameters
      * @throws  \Exception
-     * @return  PDO
+     * @return  Quoter
      */
     public static function instance($name = null, array $config = null)
     {
@@ -195,7 +195,7 @@ class PDO
             {
                 // Load the configuration for this database
                 $config = array(
-                    'type'       => 'PDO',
+                    'type'       => 'quoter',
                     'connection' => array(
                         'dsn'        => 'mysql:host=localhost;dbname=test',
                         'username'   => 'test',

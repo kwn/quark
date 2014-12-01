@@ -2,7 +2,6 @@
 
 namespace Quark\Database\Query\Builder;
 
-use Quark\Database\PDO;
 use Quark\DB;
 use Quark\Exception\QuarkException;
 
@@ -62,20 +61,16 @@ class Delete extends Where
      * @param   mixed  $db  Database instance or name of instance
      * @return  string
      */
-    public function compile($db = null)
+    public function compile()
     {
-        if (!is_object($db)) {
-            $db = PDO::instance($db);
-        }
-
-        $query = 'DELETE FROM '.$db->quoteTable($this->table);
+        $query = 'DELETE FROM '.$this->quoter->quoteTable($this->table);
 
         if (!empty($this->where)) {
-            $query .= ' WHERE '.$this->compileConditions($db, $this->where);
+            $query .= ' WHERE '.$this->compileConditions($this->where);
         }
 
         if (!empty($this->orderBy)) {
-            $query .= ' '.$this->compileOrderBy($db, $this->orderBy);
+            $query .= ' '.$this->compileOrderBy($this->orderBy);
         }
 
         if (null !== $this->limit) {
@@ -84,7 +79,7 @@ class Delete extends Where
 
         $this->sql = $query;
 
-        return parent::compile($db);
+        return parent::compile();
     }
 
     /**

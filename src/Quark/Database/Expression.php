@@ -63,10 +63,9 @@ class Expression
     /**
      * Compile the SQL expression and return it.
      *
-     * @param   mixed    PDO instance or name of instance
      * @return  string
      */
-    public function compile($db = NULL)
+    public function compile()
     {
         $value = $this->value();
 

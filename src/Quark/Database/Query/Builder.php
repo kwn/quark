@@ -2,8 +2,8 @@
 
 namespace Quark\Database\Query;
 
-use Quark\Database\PDO;
 use Quark\Database\Query\Builder\Join;
+use Quark\Database\Quoter;
 
 /**
  * Database query builder. See [Query Builder](/database/query/builder) for usage and examples.
@@ -25,6 +25,11 @@ abstract class Builder
     protected $sql;
 
     /**
+     * @var \Quark\Database\Quoter
+     */
+    protected $quoter;
+
+    /**
      * Creates a new SQL query of the specified type.
      *
      * @param   integer  $type  query type: Database::SELECT, Database::INSERT, etc
@@ -32,8 +37,10 @@ abstract class Builder
      */
     public function __construct($type, $sql)
     {
-        $this->type       = $type;
-        $this->sql        = $sql;
+        $this->type   = $type;
+        $this->sql    = $sql;
+
+        $this->quoter = Quoter::instance();
     }
 
     /**
@@ -44,7 +51,7 @@ abstract class Builder
     public function __toString()
     {
         try {
-            return $this->compile(PDO::instance());
+            return $this->compile();
         } catch (\Exception $e) {
             return $e->getMessage();
         }
@@ -64,10 +71,9 @@ abstract class Builder
      * Compile the SQL query and return it. Replaces any parameters with their
      * given values.
      *
-     * @param  mixed $db Database instance or name of instance
      * @return string
      */
-    public function compile($db = null)
+    public function compile()
     {
         $sql = $this->sql;
 
@@ -77,17 +83,16 @@ abstract class Builder
     /**
      * Compiles an array of JOIN statements into an SQL partial.
      *
-     * @param \Quark\Database\PDO $db Database instance
      * @param   array $joins join statements
      * @return  string
      */
-    protected function compileJoin(PDO $db, array $joins)
+    protected function compileJoin(array $joins)
     {
         $statements = array();
 
         foreach ($joins as $join) {
             /** @var Join $join */
-            $statements[] = $join->compile($db);
+            $statements[] = $join->compile();
         }
 
         return implode(' ', $statements);
@@ -97,11 +102,10 @@ abstract class Builder
      * Compiles an array of conditions into an SQL partial. Used for WHERE
      * and HAVING.
      *
-     * @param  \Quark\Database\PDO $db Database instance
      * @param  array $conditions condition statements
      * @return string
      */
-    protected function compileConditions(PDO $db, array $conditions)
+    protected function compileConditions(array $conditions)
     {
         $last_condition = null;
 
@@ -137,19 +141,19 @@ abstract class Builder
                     if ($op === 'BETWEEN' && is_array($value)) {
                         list($min, $max) = $value;
 
-                        $min = $db->quote($min);
-                        $max = $db->quote($max);
+                        $min = $this->quoter->quote($min);
+                        $max = $this->quoter->quote($max);
 
                         $value = $min . ' AND ' . $max;
                     } else {
-                        $value = $db->quote($value);
+                        $value = $this->quoter->quote($value);
                     }
 
                     if ($column) {
                         if (is_array($column)) {
-                            $column = $db->quoteIdentifier(reset($column));
+                            $column = $this->quoter->quoteIdentifier(reset($column));
                         } else {
-                            $column = $db->quoteColumn($column);
+                            $column = $this->quoter->quoteColumn($column);
                         }
                     }
 
@@ -166,19 +170,18 @@ abstract class Builder
     /**
      * Compiles an array of set values into an SQL partial. Used for UPDATE.
      *
-     * @param  \Quark\Database\PDO $db Database instance
      * @param  array $values updated values
      * @return string
      */
-    protected function compileSet(PDO $db, array $values)
+    protected function compileSet(array $values)
     {
         $set = array();
 
         foreach ($values as $group) {
             list ($column, $value) = $group;
 
-            $column = $db->quoteColumn($column);
-            $value  = $db->quote($value);
+            $column = $this->quoter->quoteColumn($column);
+            $value  = $this->quoter->quote($value);
 
             $set[$column] = $column . ' = ' . $value;
         }
@@ -189,19 +192,18 @@ abstract class Builder
     /**
      * Compiles an array of GROUP BY columns into an SQL partial.
      *
-     * @param  \Quark\Database\PDO $db Database instance
      * @param  array $columns
      * @return string
      */
-    protected function compileGroupBy(PDO $db, array $columns)
+    protected function compileGroupBy(array $columns)
     {
         $group = array();
 
         foreach ($columns as $column) {
             if (is_array($column)) {
-                $column = $db->quoteIdentifier(end($column));
+                $column = $this->quoter->quoteIdentifier(end($column));
             } else {
-                $column = $db->quoteColumn($column);
+                $column = $this->quoter->quoteColumn($column);
             }
 
             $group[] = $column;
@@ -213,11 +215,10 @@ abstract class Builder
     /**
      * Compiles an array of ORDER BY statements into an SQL partial.
      *
-     * @param  \Quark\Database\PDO $db Database instance
      * @param  array $columns sorting columns
      * @return string
      */
-    protected function compileOrderBy(PDO $db, array $columns)
+    protected function compileOrderBy(array $columns)
     {
         $sort = array();
 
@@ -225,9 +226,9 @@ abstract class Builder
             list ($column, $direction) = $group;
 
             if (is_array($column)) {
-                $column = $db->quoteIdentifier(end($column));
+                $column = $this->quoter->quoteIdentifier(end($column));
             } else {
-                $column = $db->quoteColumn($column);
+                $column = $this->quoter->quoteColumn($column);
             }
 
             if ($direction) {
