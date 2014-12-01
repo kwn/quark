@@ -35,11 +35,11 @@ class SelectTest extends PHPUnit_Framework_TestCase
             ->join(array('venues', 'v'), 'RIGHT')
                 ->on('v.user_id', '=', 'u.id')
             ->where('u.name', '=', 'test')
-            ->having_open()
+            ->havingOpen()
                 ->having('u.age', '>', '10')
-                ->or_having('u.age', '<', '14')
-            ->having_close()
-            ->order_by('u.age', 'DESC')
+                ->orHaving('u.age', '<', '14')
+            ->havingClose()
+            ->orderBy('u.age', 'DESC')
             ->limit(10)
             ->compile();
 
@@ -57,11 +57,11 @@ class SelectTest extends PHPUnit_Framework_TestCase
             ->join(array('venues', 'v'), 'RIGHT')
                 ->on('v.user_id', '=', 'u.id')
             ->where('u.name', '=', 'test')
-            ->having_open()
+            ->havingOpen()
                 ->having('u.age', '>', '10')
-                ->or_having('u.age', '<', '14')
-            ->having_close()
-            ->order_by('u.age', 'DESC')
+                ->orHaving('u.age', '<', '14')
+            ->havingClose()
+            ->orderBy('u.age', 'DESC')
             ->limit(10)
             ->reset()
             ->compile();
@@ -81,7 +81,7 @@ class SelectTest extends PHPUnit_Framework_TestCase
 
         $query = $qb
             ->from(array('users', 'u'))
-            ->group_by('u.active', 'u.blocked')
+            ->groupBy('u.active', 'u.blocked')
             ->compile();
 
         $expectedQuery = "SELECT u.id AS id, u.username AS name, COUNT(u.id) AS amount FROM users AS u GROUP BY u.active, u.blocked";
@@ -99,7 +99,7 @@ class SelectTest extends PHPUnit_Framework_TestCase
 
         $union
             ->from(array('users', 'u'))
-            ->group_by('u.active');
+            ->groupBy('u.active');
 
         $select = new Quark\Database\Query\Builder\Select(array(
             array('u.id', 'id'),
@@ -109,7 +109,7 @@ class SelectTest extends PHPUnit_Framework_TestCase
 
         $query = $select
             ->from(array('users', 'u'))
-            ->group_by('u.blocked')
+            ->groupBy('u.blocked')
             ->union($union)
             ->compile();
 
@@ -123,10 +123,10 @@ class SelectTest extends PHPUnit_Framework_TestCase
         $delete = new \Quark\Database\Query\Builder\Delete('posts');
         $delete
             ->where('posts.id', 'IN', array(1, 2, 3))
-            ->or_where_open()
+            ->orWhereOpen()
                 ->where('posts.title', 'LIKE', '%test%')
-                ->or_where('posts.title', 'LIKE', '%qwer%')
-            ->or_where_close();
+                ->orWhere('posts.title', 'LIKE', '%qwer%')
+            ->orWhereClose();
 
         $select = new Quark\Database\Query\Builder\Select(array(
             array('u.id', 'id'),
@@ -137,7 +137,7 @@ class SelectTest extends PHPUnit_Framework_TestCase
         try {
             $select
                 ->from(array('users', 'u'))
-                ->group_by('u.blocked')
+                ->groupBy('u.blocked')
                 ->union($delete)
                 ->compile();
 
@@ -172,10 +172,10 @@ class SelectTest extends PHPUnit_Framework_TestCase
         $query = $qb
             ->from(array('users', 'u'))
             ->having('u.age', '<', 18)
-            ->or_having_open()
+            ->orHavingOpen()
                 ->having('u.age', '>=', 18)
-                ->and_having('u.status', '=', 'child')
-            ->or_having_close()
+                ->andHaving('u.status', '=', 'child')
+            ->orHavingClose()
             ->compile();
 
         $expectedQuery = "SELECT users.id AS id, users.username AS name, users.password AS pass FROM users AS u HAVING u.age < 18 OR (u.age >= 18 AND u.status = 'child')";
@@ -193,14 +193,14 @@ class SelectTest extends PHPUnit_Framework_TestCase
 
         $query = $qb
             ->from(array('users', 'u'))
-            ->having_open()
+            ->havingOpen()
                 ->having('u.age', '<', 18)
-                ->or_having('u.status', '=', 'child')
-            ->having_close()
-            ->or_having_open()
+                ->orHaving('u.status', '=', 'child')
+            ->havingClose()
+            ->orHavingOpen()
                 ->having('u.age', '>=', 18)
-                ->and_having('u.status', '=', 'child')
-            ->or_having_close()
+                ->andHaving('u.status', '=', 'child')
+            ->orHavingClose()
             ->compile();
 
         $expectedQuery = "SELECT users.id AS id, users.username AS name, users.password AS pass FROM users AS u HAVING (u.age < 18 OR u.status = 'child') OR (u.age >= 18 AND u.status = 'child')";
@@ -231,7 +231,7 @@ class SelectTest extends PHPUnit_Framework_TestCase
         $qb = new \Quark\Database\Query\Builder\Select();
 
         $query = $qb
-            ->select_array(array(
+            ->selectArray(array(
                 array('users.id', 'id'),
                 array('users.username', 'name'),
                 array('users.password', 'pass')

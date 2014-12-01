@@ -136,7 +136,7 @@ class Select extends Where
      * @param   array  $columns  list of column names or aliases
      * @return  $this
      */
-    public function select_array(array $columns)
+    public function selectArray(array $columns)
     {
         $this->select = array_merge($this->select, $columns);
 
@@ -208,7 +208,7 @@ class Select extends Where
      * @param   mixed  $columns  column name or array($column, $alias) or object
      * @return  $this
      */
-    public function group_by($columns)
+    public function groupBy($columns)
     {
         $columns = func_get_args();
 
@@ -227,7 +227,7 @@ class Select extends Where
      */
     public function having($column, $op, $value = null)
     {
-        return $this->and_having($column, $op, $value);
+        return $this->andHaving($column, $op, $value);
     }
 
     /**
@@ -238,7 +238,7 @@ class Select extends Where
      * @param   mixed   $value   column value
      * @return  $this
      */
-    public function and_having($column, $op, $value = null)
+    public function andHaving($column, $op, $value = null)
     {
         $this->having[] = array('AND' => array($column, $op, $value));
 
@@ -253,7 +253,7 @@ class Select extends Where
      * @param   mixed   $value   column value
      * @return  $this
      */
-    public function or_having($column, $op, $value = null)
+    public function orHaving($column, $op, $value = null)
     {
         $this->having[] = array('OR' => array($column, $op, $value));
 
@@ -265,9 +265,9 @@ class Select extends Where
      *
      * @return  $this
      */
-    public function having_open()
+    public function havingOpen()
     {
-        return $this->and_having_open();
+        return $this->andHavingOpen();
     }
 
     /**
@@ -275,7 +275,7 @@ class Select extends Where
      *
      * @return  $this
      */
-    public function and_having_open()
+    public function andHavingOpen()
     {
         $this->having[] = array('AND' => '(');
 
@@ -287,7 +287,7 @@ class Select extends Where
      *
      * @return  $this
      */
-    public function or_having_open()
+    public function orHavingOpen()
     {
         $this->having[] = array('OR' => '(');
 
@@ -299,9 +299,9 @@ class Select extends Where
      *
      * @return  $this
      */
-    public function having_close()
+    public function havingClose()
     {
-        return $this->and_having_close();
+        return $this->andHavingClose();
     }
 
     /**
@@ -309,7 +309,7 @@ class Select extends Where
      *
      * @return  $this
      */
-    public function and_having_close()
+    public function andHavingClose()
     {
         $this->having[] = array('AND' => ')');
 
@@ -321,7 +321,7 @@ class Select extends Where
      *
      * @return  $this
      */
-    public function or_having_close()
+    public function orHavingClose()
     {
         $this->having[] = array('OR' => ')');
 

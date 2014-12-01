@@ -49,7 +49,7 @@ class UpdateTest extends PHPUnit_Framework_TestCase
                 'p.active' => 1
             ))
             ->where('posts.id', 'IN', array(1, 2, 3))
-            ->order_by('p.views', 'ASC')
+            ->orderBy('p.views', 'ASC')
             ->limit(5)
             ->compile();
 

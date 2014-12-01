@@ -31,10 +31,10 @@ class DeleteTest extends PHPUnit_Framework_TestCase
         $query = $this
             ->queryBuilder
             ->where('posts.id', 'IN', array('1', '2', '3'))
-            ->or_where_open()
+            ->orWhereOpen()
                 ->where('posts.title', 'LIKE', '%test%')
-                ->or_where('posts.title', 'LIKE', '%qwer%')
-            ->or_where_close()
+                ->orWhere('posts.title', 'LIKE', '%qwer%')
+            ->orWhereClose()
             ->compile();
 
         $this->assertSame($this->simpleResultQuery, $query);
@@ -45,11 +45,11 @@ class DeleteTest extends PHPUnit_Framework_TestCase
         $query = $this
             ->queryBuilder
             ->where('posts.id', 'IN', array('1', '2', '3'))
-            ->or_where_open()
+            ->orWhereOpen()
                 ->where('posts.title', 'LIKE', '%test%')
-                ->or_where('posts.title', 'LIKE', '%qwer%')
-            ->or_where_close()
-            ->order_by('posts.views', 'ASC')
+                ->orWhere('posts.title', 'LIKE', '%qwer%')
+            ->orWhereClose()
+            ->orderBy('posts.views', 'ASC')
             ->limit(5)
             ->compile();
 
@@ -61,10 +61,10 @@ class DeleteTest extends PHPUnit_Framework_TestCase
         $query = $this
             ->queryBuilder
             ->where('posts.id', 'IN', array('1', '2', '3'))
-            ->or_where_open()
+            ->orWhereOpen()
                 ->where('posts.title', 'LIKE', '%test%')
-                ->or_where('posts.title', 'LIKE', '%qwer%')
-            ->or_where_close()
+                ->orWhere('posts.title', 'LIKE', '%qwer%')
+            ->orWhereClose()
             ->reset()
             ->compile();
 

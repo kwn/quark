@@ -40,7 +40,7 @@ abstract class Where extends Builder
      */
     public function where($column, $op, $value)
     {
-        return $this->and_where($column, $op, $value);
+        return $this->andWhere($column, $op, $value);
     }
 
     /**
@@ -51,7 +51,7 @@ abstract class Where extends Builder
      * @param   mixed   $value   column value
      * @return  $this
      */
-    public function and_where($column, $op, $value)
+    public function andWhere($column, $op, $value)
     {
         $this->where[] = array('AND' => array($column, $op, $value));
 
@@ -66,7 +66,7 @@ abstract class Where extends Builder
      * @param   mixed   $value   column value
      * @return  $this
      */
-    public function or_where($column, $op, $value)
+    public function orWhere($column, $op, $value)
     {
         $this->where[] = array('OR' => array($column, $op, $value));
 
@@ -78,9 +78,9 @@ abstract class Where extends Builder
      *
      * @return  $this
      */
-    public function where_open()
+    public function whereOpen()
     {
-        return $this->and_where_open();
+        return $this->andWhereOpen();
     }
 
     /**
@@ -88,7 +88,7 @@ abstract class Where extends Builder
      *
      * @return  $this
      */
-    public function and_where_open()
+    public function andWhereOpen()
     {
         $this->where[] = array('AND' => '(');
 
@@ -100,7 +100,7 @@ abstract class Where extends Builder
      *
      * @return  $this
      */
-    public function or_where_open()
+    public function orWhereOpen()
     {
         $this->where[] = array('OR' => '(');
 
@@ -112,9 +112,9 @@ abstract class Where extends Builder
      *
      * @return  $this
      */
-    public function where_close()
+    public function whereClose()
     {
-        return $this->and_where_close();
+        return $this->andWhereClose();
     }
 
     /**
@@ -123,7 +123,7 @@ abstract class Where extends Builder
      *
      * @return  $this
      */
-    public function where_close_empty()
+    public function whereCloseEmpty()
     {
         $group = end($this->where);
 
@@ -133,7 +133,7 @@ abstract class Where extends Builder
             return $this;
         }
 
-        return $this->where_close();
+        return $this->whereClose();
     }
 
     /**
@@ -141,7 +141,7 @@ abstract class Where extends Builder
      *
      * @return  $this
      */
-    public function and_where_close()
+    public function andWhereClose()
     {
         $this->where[] = array('AND' => ')');
 
@@ -153,7 +153,7 @@ abstract class Where extends Builder
      *
      * @return  $this
      */
-    public function or_where_close()
+    public function orWhereClose()
     {
         $this->where[] = array('OR' => ')');
 
@@ -167,7 +167,7 @@ abstract class Where extends Builder
      * @param   string  $direction  direction of sorting
      * @return  $this
      */
-    public function order_by($column, $direction = null)
+    public function orderBy($column, $direction = null)
     {
         $this->orderBy[] = array($column, $direction);
 

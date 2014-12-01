@@ -95,11 +95,11 @@ class InsertTest extends PHPUnit_Framework_TestCase
             ->join(array('posts', 'p'), 'LEFT')
             ->on('p.user_id', '=', 'u.id')
                 ->where('u.name', '=', 'test')
-            ->having_open()
+            ->havingOpen()
                 ->having('u.age', '>', '10')
-                ->or_having('u.age', '<', '14')
-            ->having_close()
-            ->order_by('u.age', 'DESC');
+                ->orHaving('u.age', '<', '14')
+            ->havingClose()
+            ->orderBy('u.age', 'DESC');
 
         $query = $this
             ->queryBuilder
@@ -125,11 +125,11 @@ class InsertTest extends PHPUnit_Framework_TestCase
             ->join(array('posts', 'p'), 'LEFT')
             ->on('p.user_id', '=', 'u.id')
             ->where('u.name', '=', 'test')
-            ->having_open()
+            ->havingOpen()
                 ->having('u.age', '>', '10')
-                ->or_having('u.age', '<', '14')
-            ->having_close()
-            ->order_by('u.age', 'DESC');
+                ->orHaving('u.age', '<', '14')
+            ->havingClose()
+            ->orderBy('u.age', 'DESC');
 
         try {
             $this
@@ -176,11 +176,11 @@ class InsertTest extends PHPUnit_Framework_TestCase
             ->join(array('posts', 'p'), 'LEFT')
             ->on('p.user_id', '=', 'u.id')
             ->where('u.name', '=', 'test')
-            ->having_open()
+            ->havingOpen()
                 ->having('u.age', '>', '10')
-                ->or_having('u.age', '<', '14')
-            ->having_close()
-            ->order_by('u.age', 'DESC');
+                ->orHaving('u.age', '<', '14')
+            ->havingClose()
+            ->orderBy('u.age', 'DESC');
 
         try {
             $this

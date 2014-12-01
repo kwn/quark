@@ -9,18 +9,18 @@ class WhereTest extends PHPUnit_Framework_TestCase
         $query = $qb
             ->select('id', 'username', 'pass')
             ->from('users', 'u')
-            ->where_open()
+            ->whereOpen()
                 ->where('u.age', '>', 18)
-                ->or_where('u.adult', '=', true)
-            ->where_close()
-            ->and_where_open()
+                ->orWhere('u.adult', '=', true)
+            ->whereClose()
+            ->andWhereOpen()
                 ->where('u.allowed', '=', 1)
-                ->and_where('u.signed', '=', false)
-            ->and_where_close()
-            ->or_where_open()
+                ->andWhere('u.signed', '=', false)
+            ->andWhereClose()
+            ->orWhereOpen()
                 ->where('u.username', '=', 'test')
                 ->where('u.color', '=', 'blue')
-            ->or_where_close()
+            ->orWhereClose()
             ->compile();
 
         $expectedQuery = "SELECT id, username, pass FROM users, u WHERE (u.age > 18 OR u.adult = '1') AND (u.allowed = 1 AND u.signed = '0') OR (u.username = 'test' AND u.color = 'blue')";
@@ -35,12 +35,12 @@ class WhereTest extends PHPUnit_Framework_TestCase
         $query = $qb
             ->select('id', 'username', 'pass')
             ->from('users', 'u')
-            ->where_open()
+            ->whereOpen()
                 ->where('u.age', '>', 18)
-                ->or_where('u.adult', '=', 1)
-            ->where_close_empty()
-            ->and_where_open()
-            ->where_close_empty()
+                ->orWhere('u.adult', '=', 1)
+            ->whereCloseEmpty()
+            ->andWhereOpen()
+            ->whereCloseEmpty()
             ->compile();
 
         $expectedQuery = "SELECT id, username, pass FROM users, u WHERE (u.age > 18 OR u.adult = 1)";
