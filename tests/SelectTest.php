@@ -76,7 +76,7 @@ class SelectTest extends PHPUnit_Framework_TestCase
         $qb = new \Quark\Query\Select(array(
             array('u.id', 'id'),
             array('u.username', 'name'),
-            array(new \Quark\Database\Expression('COUNT(u.id)'), 'amount')
+            array(new \Quark\Statement\Expression('COUNT(u.id)'), 'amount')
         ));
 
         $query = $qb
@@ -94,7 +94,7 @@ class SelectTest extends PHPUnit_Framework_TestCase
         $union = new \Quark\Query\Select(array(
             array('u.id', 'id'),
             array('u.username', 'name'),
-            array(new \Quark\Database\Expression('COUNT(u.id)'), 'amount')
+            array(new \Quark\Statement\Expression('COUNT(u.id)'), 'amount')
         ));
 
         $union
@@ -104,7 +104,7 @@ class SelectTest extends PHPUnit_Framework_TestCase
         $select = new \Quark\Query\Select(array(
             array('u.id', 'id'),
             array('u.username', 'name'),
-            array(new \Quark\Database\Expression('COUNT(u.id)'), 'amount')
+            array(new \Quark\Statement\Expression('COUNT(u.id)'), 'amount')
         ));
 
         $query = $select
@@ -131,7 +131,7 @@ class SelectTest extends PHPUnit_Framework_TestCase
         $select = new \Quark\Query\Select(array(
             array('u.id', 'id'),
             array('u.username', 'name'),
-            array(new \Quark\Database\Expression('COUNT(u.id)'), 'amount')
+            array(new \Quark\Statement\Expression('COUNT(u.id)'), 'amount')
         ));
 
         try {

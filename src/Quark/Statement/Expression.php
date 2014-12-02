@@ -1,6 +1,6 @@
 <?php
 
-namespace Quark\Database;
+namespace Quark\Statement;
 
 /**
  * Database expressions can be used to add unescaped SQL fragments to a
