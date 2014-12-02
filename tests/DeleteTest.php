@@ -3,7 +3,7 @@
 class DeleteTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @var \Quark\Database\Query\Builder\Delete
+     * @var \Quark\Query\Delete
      */
     public $queryBuilder;
 
@@ -23,7 +23,7 @@ class DeleteTest extends PHPUnit_Framework_TestCase
 
         $this->simpleResultQuery       = "DELETE FROM posts WHERE posts.id IN ('1', '2', '3') OR (posts.title LIKE '%test%' OR posts.title LIKE '%qwer%')";
         $this->resultWithLimitAndOrder = "DELETE FROM posts WHERE posts.id IN ('1', '2', '3') OR (posts.title LIKE '%test%' OR posts.title LIKE '%qwer%') ORDER BY posts.views ASC LIMIT 5";
-        $this->queryBuilder            = new \Quark\Database\Query\Builder\Delete('posts');
+        $this->queryBuilder            = new \Quark\Query\Delete('posts');
     }
 
     public function testSimpleQuery()

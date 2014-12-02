@@ -1,6 +1,6 @@
 <?php
 
-namespace Quark\Database\Query\Builder;
+namespace Quark\Statement;
 
 use Quark\Database\Query\Builder;
 use Quark\Database\Quoter;

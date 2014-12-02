@@ -3,7 +3,7 @@
 class UpdateTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @var \Quark\Database\Query\Builder\Update
+     * @var \Quark\Query\Update
      */
     public $queryBuilder;
 
@@ -23,7 +23,7 @@ class UpdateTest extends PHPUnit_Framework_TestCase
 
         $this->simpleResultQuery       = "UPDATE posts AS p SET p.views = 300, p.active = 1 WHERE posts.id IN (1, 2, 3)";
         $this->resultWithLimitAndOrder = "UPDATE posts AS p SET p.views = 300, p.active = 1 WHERE posts.id IN (1, 2, 3) ORDER BY p.views ASC LIMIT 5";
-        $this->queryBuilder            = new \Quark\Database\Query\Builder\Update(array('posts', 'p'));
+        $this->queryBuilder            = new \Quark\Query\Update(array('posts', 'p'));
     }
 
     public function testSimpleQuery()

@@ -1,8 +1,9 @@
 <?php
 
-namespace Quark\Database\Query\Builder;
+namespace Quark\Query;
 
 use Quark\DB;
+use Quark\Statement\Where;
 
 /**
  * Database query builder for UPDATE statements. See [Query Builder](/database/query/builder) for usage and examples.

@@ -4,7 +4,7 @@ class WhereTest extends PHPUnit_Framework_TestCase
 {
     public function testWhereSimpleQuery()
     {
-        $qb = new \Quark\Database\Query\Builder\Select();
+        $qb = new \Quark\Query\Select();
 
         $query = $qb
             ->select('id', 'username', 'pass')
@@ -30,7 +30,7 @@ class WhereTest extends PHPUnit_Framework_TestCase
 
     public function testWhereClosingEmptyQuery()
     {
-        $qb = new \Quark\Database\Query\Builder\Select();
+        $qb = new \Quark\Query\Select();
 
         $query = $qb
             ->select('id', 'username', 'pass')
@@ -50,7 +50,7 @@ class WhereTest extends PHPUnit_Framework_TestCase
 
     public function testWhereWithBetweenOperator()
     {
-        $qb = new \Quark\Database\Query\Builder\Select();
+        $qb = new \Quark\Query\Select();
 
         $query = $qb
             ->select('id', 'username', 'pass')
@@ -65,7 +65,7 @@ class WhereTest extends PHPUnit_Framework_TestCase
 
     public function testWhereWithNullCondition()
     {
-        $qb = new \Quark\Database\Query\Builder\Select();
+        $qb = new \Quark\Query\Select();
 
         $query = $qb
             ->select('id', 'username', 'pass')
@@ -80,7 +80,7 @@ class WhereTest extends PHPUnit_Framework_TestCase
 
     public function testWhereWithNotNullCondition()
     {
-        $qb = new \Quark\Database\Query\Builder\Select();
+        $qb = new \Quark\Query\Select();
 
         $query = $qb
             ->select('id', 'username', 'pass')

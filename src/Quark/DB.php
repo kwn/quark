@@ -4,6 +4,10 @@ namespace Quark;
 
 use Quark\Database\Expression;
 use Quark\Database\Query;
+use Quark\Query\Delete;
+use Quark\Query\Insert;
+use Quark\Query\Select;
+use Quark\Query\Update;
 
 /**
  * Provides a shortcut to get Database related objects for [making queries](../database/query).
@@ -44,11 +48,11 @@ class DB
      *     $query = DB::select(array('id', 'user_id'));
      *
      * @param   mixed   $columns  column name or array($column, $alias) or object
-     * @return  Query\Builder\Select
+     * @return  Select
      */
     public static function select($columns = null)
     {
-        return new Query\Builder\Select(func_get_args());
+        return new Select(func_get_args());
     }
 
     /**
@@ -58,11 +62,11 @@ class DB
      *     $query = DB::select_array(array('id', 'username'));
      *
      * @param   array   $columns  columns to select
-     * @return  Query\Builder\Select
+     * @return  Select
      */
     public static function select_array(array $columns = null)
     {
-        return new Query\Builder\Select($columns);
+        return new Select($columns);
     }
 
     /**
@@ -73,11 +77,11 @@ class DB
      *
      * @param   string  $table    table to insert into
      * @param   array   $columns  list of column names or array($column, $alias) or object
-     * @return  Query\Builder\Insert
+     * @return  Insert
      */
     public static function insert($table = null, array $columns = null)
     {
-        return new Query\Builder\Insert($table, $columns);
+        return new Insert($table, $columns);
     }
 
     /**
@@ -87,11 +91,11 @@ class DB
      *     $query = DB::update('users');
      *
      * @param   string  $table  table to update
-     * @return  Query\Builder\Update
+     * @return  Update
      */
     public static function update($table = null)
     {
-        return new Query\Builder\Update($table);
+        return new Update($table);
     }
 
     /**
@@ -101,11 +105,11 @@ class DB
      *     $query = DB::delete('users');
      *
      * @param   string  $table  table to delete from
-     * @return  Query\Builder\Delete
+     * @return  Delete
      */
     public static function delete($table = null)
     {
-        return new Query\Builder\Delete($table);
+        return new Delete($table);
     }
 
     /**

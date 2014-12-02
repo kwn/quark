@@ -3,7 +3,7 @@
 class SelectTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @var \Quark\Database\Query\Builder\Select
+     * @var \Quark\Query\Select
      */
     public $queryBuilder;
 
@@ -17,7 +17,7 @@ class SelectTest extends PHPUnit_Framework_TestCase
         parent::setUp();
 
         $this->simpleResultQuery = "SELECT DISTINCT users.id AS id, users.username AS name, users.password AS pass FROM users AS u LEFT JOIN posts AS p ON (p.user_id = u.id) RIGHT JOIN venues AS v ON (v.user_id = u.id) WHERE u.name = 'test' HAVING (u.age > '10' OR u.age < '14') ORDER BY u.age DESC LIMIT 10";
-        $this->queryBuilder      = new \Quark\Database\Query\Builder\Select(array(
+        $this->queryBuilder      = new \Quark\Query\Select(array(
             array('users.id', 'id'),
             array('users.username', 'name'),
             array('users.password', 'pass')
@@ -73,7 +73,7 @@ class SelectTest extends PHPUnit_Framework_TestCase
 
     public function testGroupByQuery()
     {
-        $qb = new Quark\Database\Query\Builder\Select(array(
+        $qb = new \Quark\Query\Select(array(
             array('u.id', 'id'),
             array('u.username', 'name'),
             array(new \Quark\Database\Expression('COUNT(u.id)'), 'amount')
@@ -91,7 +91,7 @@ class SelectTest extends PHPUnit_Framework_TestCase
 
     public function testUnionQuery()
     {
-        $union = new Quark\Database\Query\Builder\Select(array(
+        $union = new \Quark\Query\Select(array(
             array('u.id', 'id'),
             array('u.username', 'name'),
             array(new \Quark\Database\Expression('COUNT(u.id)'), 'amount')
@@ -101,7 +101,7 @@ class SelectTest extends PHPUnit_Framework_TestCase
             ->from(array('users', 'u'))
             ->groupBy('u.active');
 
-        $select = new Quark\Database\Query\Builder\Select(array(
+        $select = new \Quark\Query\Select(array(
             array('u.id', 'id'),
             array('u.username', 'name'),
             array(new \Quark\Database\Expression('COUNT(u.id)'), 'amount')
@@ -120,7 +120,7 @@ class SelectTest extends PHPUnit_Framework_TestCase
 
     public function testExceptionWhenUnionIsNotInstanceOfSelect()
     {
-        $delete = new \Quark\Database\Query\Builder\Delete('posts');
+        $delete = new \Quark\Query\Delete('posts');
         $delete
             ->where('posts.id', 'IN', array(1, 2, 3))
             ->orWhereOpen()
@@ -128,7 +128,7 @@ class SelectTest extends PHPUnit_Framework_TestCase
                 ->orWhere('posts.title', 'LIKE', '%qwer%')
             ->orWhereClose();
 
-        $select = new Quark\Database\Query\Builder\Select(array(
+        $select = new \Quark\Query\Select(array(
             array('u.id', 'id'),
             array('u.username', 'name'),
             array(new \Quark\Database\Expression('COUNT(u.id)'), 'amount')
@@ -149,7 +149,7 @@ class SelectTest extends PHPUnit_Framework_TestCase
 
     public function testUnionNotAllAndStringInsteadOfSelectBuilder()
     {
-        $select = new Quark\Database\Query\Builder\Select();
+        $select = new \Quark\Query\Select();
 
         $query = $select
             ->from(array('other_users', 'ou'))
@@ -163,7 +163,7 @@ class SelectTest extends PHPUnit_Framework_TestCase
 
     public function testHavingSimpleQuery()
     {
-        $qb = new \Quark\Database\Query\Builder\Select(array(
+        $qb = new \Quark\Query\Select(array(
             array('users.id', 'id'),
             array('users.username', 'name'),
             array('users.password', 'pass')
@@ -185,7 +185,7 @@ class SelectTest extends PHPUnit_Framework_TestCase
 
     public function testHavingComplexQuery()
     {
-        $qb = new \Quark\Database\Query\Builder\Select(array(
+        $qb = new \Quark\Query\Select(array(
             array('users.id', 'id'),
             array('users.username', 'name'),
             array('users.password', 'pass')
@@ -210,7 +210,7 @@ class SelectTest extends PHPUnit_Framework_TestCase
 
     public function testSelectUsingMethodForSelectingFields()
     {
-        $qb = new \Quark\Database\Query\Builder\Select();
+        $qb = new \Quark\Query\Select();
 
         $query = $qb
             ->select(
@@ -228,7 +228,7 @@ class SelectTest extends PHPUnit_Framework_TestCase
 
     public function testSelectUsingMethodForSelectingFieldsUsingArray()
     {
-        $qb = new \Quark\Database\Query\Builder\Select();
+        $qb = new \Quark\Query\Select();
 
         $query = $qb
             ->selectArray(array(
@@ -246,7 +246,7 @@ class SelectTest extends PHPUnit_Framework_TestCase
 
     public function testJoinWithUsing()
     {
-        $qb = new \Quark\Database\Query\Builder\Select();
+        $qb = new \Quark\Query\Select();
 
         $query = $qb
             ->select(
@@ -266,7 +266,7 @@ class SelectTest extends PHPUnit_Framework_TestCase
 
     public function testQueryWithLimitAndOffset()
     {
-        $qb = new \Quark\Database\Query\Builder\Select();
+        $qb = new \Quark\Query\Select();
 
         $query = $qb
             ->select('id', 'username', 'pass')
@@ -282,7 +282,7 @@ class SelectTest extends PHPUnit_Framework_TestCase
 
     public function testQueryWithMultipleOrderBy()
     {
-        $qb = new \Quark\Database\Query\Builder\Select();
+        $qb = new \Quark\Query\Select();
 
         $query = $qb
             ->select('id', 'username', 'pass')

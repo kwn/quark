@@ -1,6 +1,6 @@
 <?php
 
-namespace Quark\Database\Query\Builder;
+namespace Quark\Query;
 
 use Quark\Database\Query\Builder;
 use Quark\DB;

@@ -3,7 +3,7 @@
 class InsertTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @var \Quark\Database\Query\Builder\Insert
+     * @var \Quark\Query\Insert
      */
     public $queryBuilder;
 
@@ -17,7 +17,7 @@ class InsertTest extends PHPUnit_Framework_TestCase
         parent::setUp();
 
         $this->simpleResultQuery = "INSERT INTO posts (posts.username, posts.email, posts.age) VALUES ('test1', 'test1@test.com', '13'), ('test2', 'test2@test.com', '23'), ('test3', 'test3@test.com', '33')";
-        $this->queryBuilder      = new \Quark\Database\Query\Builder\Insert();
+        $this->queryBuilder      = new \Quark\Query\Insert();
     }
 
     public function testSimple()
@@ -67,7 +67,7 @@ class InsertTest extends PHPUnit_Framework_TestCase
 
     public function testInitTableAndColumnsInConstructor()
     {
-        $queryBuilder = new \Quark\Database\Query\Builder\Insert(
+        $queryBuilder = new \Quark\Query\Insert(
             'posts',
             array('posts.username', 'posts.email', 'posts.age')
         );
@@ -85,7 +85,7 @@ class InsertTest extends PHPUnit_Framework_TestCase
 
     public function testInsertWithSelectSubquery()
     {
-        $qb = new \Quark\Database\Query\Builder\Select(array(
+        $qb = new \Quark\Query\Select(array(
             'name',
             'email'
         ));
@@ -115,7 +115,7 @@ class InsertTest extends PHPUnit_Framework_TestCase
 
     public function testExceptionWhenTryingToMixValuesArrayAndSelectSubquery()
     {
-        $qb = new \Quark\Database\Query\Builder\Select(array(
+        $qb = new \Quark\Query\Select(array(
             'name',
             'email'
         ));
@@ -147,7 +147,7 @@ class InsertTest extends PHPUnit_Framework_TestCase
 
     public function testExceptionWhenTryingToUseSelectWithDifferentBuilderType()
     {
-        $qb = new \Quark\Database\Query\Builder\Insert('posts');
+        $qb = new \Quark\Query\Insert('posts');
 
         try {
             $this
@@ -166,7 +166,7 @@ class InsertTest extends PHPUnit_Framework_TestCase
 
     public function testExceptionWhenUsingTableAliasInInsertSelectConstruction()
     {
-        $qb = new \Quark\Database\Query\Builder\Select(array(
+        $qb = new \Quark\Query\Select(array(
             'name',
             'email'
         ));

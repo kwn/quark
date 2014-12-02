@@ -1,9 +1,11 @@
 <?php
 
-namespace Quark\Database\Query\Builder;
+namespace Quark\Query;
 
 use Quark\DB;
 use Quark\Exception\QuarkException;
+use Quark\Statement\Join;
+use Quark\Statement\Where;
 
 /**
  * Database query builder for SELECT statements. See [Query Builder](/database/query/builder) for usage and examples.

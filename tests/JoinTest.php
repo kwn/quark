@@ -4,7 +4,7 @@ class JoinTest extends PHPUnit_Framework_TestCase
 {
     public function testExceptionWhenMixingJoinOnAndUsing()
     {
-        $qb = new \Quark\Database\Query\Builder\Select();
+        $qb = new \Quark\Query\Select();
 
         try {
             $qb
@@ -23,7 +23,7 @@ class JoinTest extends PHPUnit_Framework_TestCase
 
     public function testExceptionWhenMixingUsingAndOn()
     {
-        $qb = new \Quark\Database\Query\Builder\Select();
+        $qb = new \Quark\Query\Select();
 
         try {
             $qb
@@ -42,7 +42,7 @@ class JoinTest extends PHPUnit_Framework_TestCase
 
     public function testStandaloneJoinStatementWithOn()
     {
-        $qb = new \Quark\Database\Query\Builder\Join(array('posts', 'p'));
+        $qb = new \Quark\Statement\Join(array('posts', 'p'));
 
         $query = $qb
             ->on('p.user_id', '=', 'u.id')
@@ -55,7 +55,7 @@ class JoinTest extends PHPUnit_Framework_TestCase
 
     public function testStandaloneJoinStatementWithUsing()
     {
-        $qb = new \Quark\Database\Query\Builder\Join(array('posts', 'p'));
+        $qb = new \Quark\Statement\Join(array('posts', 'p'));
 
         $query = $qb
             ->using('user_id')
@@ -68,7 +68,7 @@ class JoinTest extends PHPUnit_Framework_TestCase
 
     public function testStandaloneJoinReset()
     {
-        $qb = new \Quark\Database\Query\Builder\Join(array('posts', 'p'));
+        $qb = new \Quark\Statement\Join(array('posts', 'p'));
 
         $qb->on('p.user_id', '=', 'u.id');
         $qb->reset();
