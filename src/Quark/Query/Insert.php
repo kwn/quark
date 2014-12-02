@@ -2,9 +2,9 @@
 
 namespace Quark\Query;
 
-use Quark\Database\Query\Builder;
 use Quark\DB;
 use Quark\Exception\QuarkException;
+use Quark\Worker\Builder;
 
 /**
  * Database query builder for INSERT statements. See [Query Builder](/database/query/builder) for usage and examples.

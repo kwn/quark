@@ -2,7 +2,7 @@
 
 namespace Quark\Statement;
 
-use Quark\Database\Query\Builder;
+use Quark\Worker\Builder;
 
 /**
  * Database query builder for WHERE statements. See [Query Builder](/database/query/builder) for usage and examples.

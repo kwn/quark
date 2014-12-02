@@ -2,9 +2,9 @@
 
 namespace Quark\Statement;
 
-use Quark\Database\Query\Builder;
-use Quark\Database\Quoter;
 use Quark\Exception\QuarkException;
+use Quark\Worker\Builder;
+use Quark\Worker\Quoter;
 
 /**
  * Database query builder for JOIN statements. See [Query Builder](/database/query/builder) for usage and examples.
@@ -40,7 +40,7 @@ class Join extends Builder
     private $using;
 
     /**
-     * @var \Quark\Database\Quoter
+     * @var \Quark\Worker\Quoter
      */
     protected $quoter;
 

@@ -1,10 +1,9 @@
 <?php
 
-namespace Quark\Database;
+namespace Quark\Worker;
 
-use Quark\Database;
 use Quark\Exception\QuarkException;
-use Quark\Database\Query\Builder;
+use Quark\Statement\Expression;
 
 /**
  * PDO database connection.
@@ -213,11 +212,8 @@ class Quoter
                 throw new \Exception(sprintf('Database type not defined in :name configuration', $name));
             }
 
-            // Set the driver class name
-            $driver = 'Quark\\Database\\'.ucfirst($config['type']);
-
             // Create the database connection instance
-            $driver = new $driver($name, $config);
+            $driver = new Quoter($name, $config);
 
             // Store the database instance
             self::$instances[$name] = $driver;

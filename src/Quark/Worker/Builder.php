@@ -1,9 +1,8 @@
 <?php
 
-namespace Quark\Database\Query;
+namespace Quark\Worker;
 
-use Quark\Database\Query\Builder\Join;
-use Quark\Database\Quoter;
+use Quark\Statement\Join;
 
 /**
  * Database query builder. See [Query Builder](/database/query/builder) for usage and examples.
@@ -25,7 +24,7 @@ abstract class Builder
     protected $sql;
 
     /**
-     * @var \Quark\Database\Quoter
+     * @var \Quark\Worker\Quoter
      */
     protected $quoter;
 
