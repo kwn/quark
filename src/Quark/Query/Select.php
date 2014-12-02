@@ -10,7 +10,7 @@ use Quark\Statement\Where;
 /**
  * Database query builder for SELECT statements. See [Query Builder](/database/query/builder) for usage and examples.
  */
-class Select extends Where
+class Select extends Where implements QueryInterface
 {
     /**
      * SELECT ...

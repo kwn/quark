@@ -2,12 +2,12 @@
 
 namespace Quark;
 
-use Quark\Database\Expression;
 use Quark\Database\Query;
 use Quark\Query\Delete;
 use Quark\Query\Insert;
 use Quark\Query\Select;
 use Quark\Query\Update;
+use Quark\Statement\Expression;
 
 /**
  * Provides a shortcut to get Database related objects for [making queries](../database/query).

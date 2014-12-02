@@ -9,7 +9,7 @@ use Quark\Exception\QuarkException;
 /**
  * Database query builder for INSERT statements. See [Query Builder](/database/query/builder) for usage and examples.
  */
-class Insert extends Builder
+class Insert extends Builder implements QueryInterface
 {
     /**
      * INSERT INTO ...

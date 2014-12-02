@@ -9,7 +9,7 @@ use Quark\Statement\Where;
 /**
  * Database query builder for DELETE statements. See [Query Builder](/database/query/builder) for usage and examples.
  */
-class Delete extends Where
+class Delete extends Where implements QueryInterface
 {
     /**
      * DELETE FROM ...
@@ -59,7 +59,6 @@ class Delete extends Where
     /**
      * Compile the SQL query and return it.
      *
-     * @param   mixed  $db  Database instance or name of instance
      * @return  string
      */
     public function compile()

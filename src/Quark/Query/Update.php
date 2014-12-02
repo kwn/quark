@@ -8,7 +8,7 @@ use Quark\Statement\Where;
 /**
  * Database query builder for UPDATE statements. See [Query Builder](/database/query/builder) for usage and examples.
  */
-class Update extends Where
+class Update extends Where implements QueryInterface
 {
     /**
      * UPDATE ...
@@ -90,7 +90,6 @@ class Update extends Where
     /**
      * Compile the SQL query and return it.
      *
-     * @param   mixed  $db  Database instance or name of instance
      * @return  string
      */
     public function compile()
