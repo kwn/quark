@@ -2,7 +2,6 @@
 
 namespace Quark\Query;
 
-use Quark\DB;
 use Quark\Exception\QuarkException;
 use Quark\Statement\Where;
 
@@ -35,7 +34,7 @@ class Delete extends Where implements QueryInterface
             $this->table($table);
         }
 
-        return parent::__construct(DB::DELETE, '');
+        return parent::__construct('');
     }
 
     /**

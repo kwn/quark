@@ -2,7 +2,6 @@
 
 namespace Quark\Query;
 
-use Quark\DB;
 use Quark\Exception\QuarkException;
 use Quark\Statement\Join;
 use Quark\Statement\Where;
@@ -100,7 +99,7 @@ class Select extends Where implements QueryInterface
             $this->select = $columns;
         }
 
-        parent::__construct(DB::SELECT, '');
+        parent::__construct('');
     }
 
     /**
@@ -340,7 +339,8 @@ class Select extends Where implements QueryInterface
     public function union($select, $all = true)
     {
         if (is_string($select)) {
-            $select = DB::select()->from($select);
+            $qb     = new Select();
+            $select = $qb->from($select);
         }
 
         if (!$select instanceof Select) {

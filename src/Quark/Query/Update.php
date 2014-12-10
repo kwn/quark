@@ -2,7 +2,6 @@
 
 namespace Quark\Query;
 
-use Quark\DB;
 use Quark\Statement\Where;
 
 /**
@@ -42,7 +41,7 @@ class Update extends Where implements QueryInterface
             $this->table($table);
         }
 
-        return parent::__construct(DB::UPDATE, '');
+        return parent::__construct('');
     }
 
     /**

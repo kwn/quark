@@ -2,7 +2,6 @@
 
 namespace Quark;
 
-use Quark\Database\Query;
 use Quark\Query\Delete;
 use Quark\Query\Insert;
 use Quark\Query\Select;

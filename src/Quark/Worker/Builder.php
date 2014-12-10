@@ -10,13 +10,6 @@ use Quark\Statement\Join;
 abstract class Builder
 {
     /**
-     * Query type
-     *
-     * @var int
-     */
-    protected $type;
-
-    /**
      * SQL statement
      *
      * @var string
@@ -31,14 +24,11 @@ abstract class Builder
     /**
      * Creates a new SQL query of the specified type.
      *
-     * @param   integer  $type  query type: Database::SELECT, Database::INSERT, etc
      * @param   string   $sql   query string
      */
-    public function __construct($type, $sql)
+    public function __construct($sql)
     {
-        $this->type   = $type;
         $this->sql    = $sql;
-
         $this->quoter = Quoter::instance();
     }
 
@@ -54,16 +44,6 @@ abstract class Builder
         } catch (\Exception $e) {
             return $e->getMessage();
         }
-    }
-
-    /**
-     * Get the type of the query.
-     *
-     * @return  integer
-     */
-    public function type()
-    {
-        return $this->type;
     }
 
     /**

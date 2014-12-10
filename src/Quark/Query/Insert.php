@@ -2,7 +2,6 @@
 
 namespace Quark\Query;
 
-use Quark\DB;
 use Quark\Exception\QuarkException;
 use Quark\Worker\Builder;
 
@@ -52,7 +51,7 @@ class Insert extends Builder implements QueryInterface
             $this->columns = $columns;
         }
 
-        return parent::__construct(DB::INSERT, '');
+        return parent::__construct('');
     }
 
     /**
@@ -109,13 +108,13 @@ class Insert extends Builder implements QueryInterface
     /**
      * Use a sub-query to for the inserted values.
      *
-     * @param \Quark\Database\Query\Builder $query Database_Query of SELECT type
-     * @throws \Quark\Exception\QuarkException
+     * @param  QueryInterface $query Database_Query of SELECT type
+     * @throws QuarkException
      * @return  $this
      */
-    public function select(Builder $query)
+    public function select(QueryInterface $query)
     {
-        if ($query->type() !== DB::SELECT) {
+        if (!$query instanceof Select) {
             throw new QuarkException('Only SELECT queries can be combined with INSERT queries');
         }
 
